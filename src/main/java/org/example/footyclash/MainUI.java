@@ -2,8 +2,9 @@ package org.example.footyclash;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.texture.Texture;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
 import static com.almasb.fxgl.dsl.FXGLForKtKt.*;
@@ -31,7 +32,10 @@ public class MainUI extends GameApplication {
 
     @Override
     protected void initUI() {
-        Texture bg = texture("mainmenu.png");
+        Image image = new Image(
+                getClass().getResource("/assets/textures/mainmenu.png").toExternalForm());
+
+        ImageView bg = new ImageView(image);
         bg.setFitWidth(getAppWidth());
         bg.setFitHeight(getAppHeight());
 
