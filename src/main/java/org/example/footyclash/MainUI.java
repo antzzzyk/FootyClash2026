@@ -2,9 +2,8 @@ package org.example.footyclash;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.texture.Texture;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
 import static com.almasb.fxgl.dsl.FXGLForKtKt.*;
@@ -25,28 +24,27 @@ public class MainUI extends GameApplication {
     protected void initGame() {
 
     }
+
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
-    protected void initUI(){
-        Image image = new Image(
-                getClass().getResource("/assets/textures/mainmenu.png").toExternalForm()
-        );
-
-        ImageView bg = new ImageView(image);
+    protected void initUI() {
+        Texture bg = texture("mainmenu.png");
         bg.setFitWidth(getAppWidth());
         bg.setFitHeight(getAppHeight());
 
         getGameScene().addUINode(bg);
 
-        //Buttons
-        VBox mmenu =  new VBox(10);
+        // Buttons
+        VBox mmenu = new VBox(10);
         Button solo = new Button("Solo Mode");
-        solo.setOnAction(e -> {});
+        solo.setOnAction(e -> {
+        });
         Button twop = new Button("2 Players");
-        twop.setOnAction(e -> {});
+        twop.setOnAction(e -> {
+        });
         Button sett = new Button("Settings");
 
         // Apply sizing to both
@@ -60,11 +58,9 @@ public class MainUI extends GameApplication {
         mmenu.getChildren().addAll(solo, twop, sett);
 
         mmenu.setTranslateX(650);
-        mmenu.setTranslateY(getAppHeight()/2 - mmenu.getHeight()/2);
+        mmenu.setTranslateY(getAppHeight() / 2 - mmenu.getHeight() / 2);
 
         getGameScene().addUINode(mmenu);
-
-
 
     }
 }
