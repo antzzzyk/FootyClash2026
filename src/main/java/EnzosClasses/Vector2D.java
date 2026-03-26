@@ -12,6 +12,7 @@ public class Vector2D {
     public double getX() {
         return x;
     }
+
     public double getY() {
         return y;
     }
@@ -47,5 +48,10 @@ public class Vector2D {
     public Vector2D normalize() {
         double m = magnitude();
         return new Vector2D(x / m, y / m);
+    }
+
+    public double length() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'length'");
     }
 }
