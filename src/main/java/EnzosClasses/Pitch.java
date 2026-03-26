@@ -1,5 +1,13 @@
 package EnzosClasses;
 
 public class Pitch {
-    private double frictionCoefficient = 5;
+    private static double frictionCoefficient = .3;
+
+    Pitch(){
+
+    }
+
+    public static double  getFrictionCoefficient() {
+        return frictionCoefficient;
+    }
 }

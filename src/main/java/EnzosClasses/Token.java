@@ -6,8 +6,8 @@ public class Token extends Circle {
     private Vector2D position;
     private Vector2D velocity;
     private Vector2D acceleration;
-    private double mass = 5;
-    private double radius = 2;
+    private double weight = 5; //N
+    private double radius = 2; //M
 
     public Token() {
     }
@@ -19,8 +19,8 @@ public class Token extends Circle {
         this.position = position;
     }
 
-    public double getMass(){
-        return mass;
+    public double getWeight(){
+        return weight;
     }
 
     public Vector2D getVelocity() {
@@ -31,9 +31,10 @@ public class Token extends Circle {
         return acceleration;
     }
 
-    public void move(Vector2D velocity) {
+    public void move(Vector2D velocity, Vector2D force) {
         this.velocity = velocity;
-        acceleration =
+        acceleration = (force.subtract(new Vector2D(Pitch.getFrictionCoefficient()*weight,
+                Pitch.getFrictionCoefficient()*weight)).divide(weight)).multiply(-1);
     }
 
     public void stop() {
@@ -42,7 +43,7 @@ public class Token extends Circle {
 
     public void applyForce(Vector2D force) {
         velocity = force;
-        move(velocity);
+        move(velocity, force);
     }
 
 }
