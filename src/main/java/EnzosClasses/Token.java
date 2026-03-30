@@ -6,8 +6,8 @@ public class Token extends Circle {
     private Vector2D position;
     private Vector2D velocity;
     private Vector2D acceleration;
-    private double weight = 5; // N
-    private double radius = 2; // M
+    private double weight = 5; // kg
+    private double radius = 2; // m
 
     public Token() {
     }

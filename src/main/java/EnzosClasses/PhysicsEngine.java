@@ -37,7 +37,7 @@ public class PhysicsEngine {
 
         double sumOfRadii = t1.getRadius() + t2.getRadius();
 
-        return distance < sumOfRadii;
+        return distance <= sumOfRadii;
     }
 
     // Impulse Logic
@@ -81,7 +81,7 @@ public class PhysicsEngine {
             return new Vector2D(0, 0);
         }
 
-        double frictionMagnitude = Pitch.getFrictionCoefficient() * (token.getWeight() / gravity) * gravity;
+        double frictionMagnitude = Pitch.getFrictionCoefficient() * token.getWeight() * gravity;
 
         Vector2D frictionVector = currentv.normalize().multiply(-frictionMagnitude);
 
