@@ -6,6 +6,7 @@ module org.example.footyclash {
     requires javafx.graphics;
 
     opens org.example.footyclash to javafx.fxml;
+
     exports org.example.footyclash;
-    exports org.example.footyclash.TestingClasses;
+    exports EnzosClasses;
 }

@@ -40,8 +40,40 @@ public class PhysicsEngine {
         return distance < sumOfRadii;
     }
 
-    public void resolveCollision() {
+    // Impulse Logic
+    private void resolveCollision(Token a, Token b) {
+        // 1. Find the exact direction of the crash (The Normal line)
+        Vector2D normal = a.getPosition().subtract(b.getPosition());
+        Vector2D unitNormal = normal.normalize(); // A vector with a length of exactly 1
 
+        // 2. Find out how fast they are smashing INTO each other
+        Vector2D relativeVelocity = a.getVelocity().subtract(b.getVelocity());
+        double speedIntoCrash = relativeVelocity.dotProduct(unitNormal);
+
+        // If they are already moving apart, do nothing!
+        if (speedIntoCrash > 0)
+            return;
+
+        // 3. Get the masses (Mass = Weight / 9.81)
+        double massA = a.getWeight() / 9.81;
+        double massB = b.getWeight() / 9.81;
+
+        // 4. Calculate 'J' (The total Oomph)
+        // This is the 2D game physics version of finding J for two bouncy objects
+        double bounciness = 1.0; // 1.0 means no energy is lost
+        double J = -(1.0 + bounciness) * speedIntoCrash;
+        J = J / ((1.0 / massA) + (1.0 / massB));
+
+        // 5. Turn J into a Vector (Direction + Oomph)
+        Vector2D impulseVector = unitNormal.multiply(J);
+
+        // 6. Apply your formula: delta v = J / m
+        Vector2D deltaVa = impulseVector.multiply(1.0 / massA);
+        Vector2D deltaVb = impulseVector.multiply(-1.0 / massB); // Negative because it goes the opposite way!
+
+        // 7. Give the tokens their new speeds
+        a.setVelocity(a.getVelocity().add(deltaVa));
+        b.setVelocity(b.getVelocity().add(deltaVb));
     }
 
     public Vector2D applyFriction(Token token, Vector2D currentv) {

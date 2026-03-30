@@ -51,7 +51,10 @@ public class Vector2D {
     }
 
     public double length() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'length'");
+        return magnitude();
+    }
+
+    public double dotProduct(Vector2D v) {
+        return this.x * v.getX() + this.y * v.getY();
     }
 }
