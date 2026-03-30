@@ -18,7 +18,7 @@ public class MainUI extends GameApplication {
     protected void initSettings(GameSettings gameSettings) {
         gameSettings.setWidth(1000);
         gameSettings.setHeight(600);
-        gameSettings.setTitle("FootyClash");
+        gameSettings.setTitle("Footy Clash");
     }
 
     @Override
