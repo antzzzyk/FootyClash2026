@@ -9,4 +9,5 @@ module org.example.footyclash {
 
     exports org.example.footyclash;
     exports EnzosClasses;
+    exports org.example.footyclash.TestingClasses;
 }

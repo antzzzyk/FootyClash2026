@@ -3,11 +3,14 @@ package EnzosClasses;
 import javafx.scene.shape.Circle;
 
 public class Token extends Circle {
-    private Vector2D position;
-    private Vector2D velocity;
-    private Vector2D acceleration;
-    private double weight = 5; // kg
-    private double radius = 2; // m
+    // FIX 1: Initialize these immediately to prevent the NullPointerException!
+    private Vector2D position = new Vector2D(0, 0);
+    private Vector2D velocity = new Vector2D(0, 0);
+    private Vector2D acceleration = new Vector2D(0, 0);
+
+    // Treating this as Mass (kg) for your F=ma calculations
+    private double weight = 5;
+    private double radius = 2;
 
     public Token() {
     }
@@ -40,19 +43,19 @@ public class Token extends Circle {
         return acceleration;
     }
 
-    public void move(Vector2D velocity, Vector2D force) {
-        this.velocity = velocity;
-        acceleration = (force.subtract(new Vector2D(Pitch.getFrictionCoefficient() * weight,
-                Pitch.getFrictionCoefficient() * weight)).divide(weight)).multiply(-1);
+    // FIX 2: Newton's 2nd Law! (Acceleration = Force / Mass)
+    // The PhysicsEngine will handle the actual movement later.
+    public void applyForce(Vector2D force) {
+        // We use 'weight' here since it represents your 5kg mass
+        this.acceleration = force.divide(weight);
     }
 
     public void stop() {
-        velocity = acceleration = new Vector2D(0, 0);
+        this.velocity = new Vector2D(0, 0);
+        this.acceleration = new Vector2D(0, 0);
     }
 
-    public void applyForce(Vector2D force) {
-        velocity = force;
-        move(velocity, force);
-    }
-
+    // NOTE: I completely removed your old move() method!
+    // Why? Because PhysicsEngine.updatePositions() now does all the
+    // kinematics and friction math for you every single frame.
 }
