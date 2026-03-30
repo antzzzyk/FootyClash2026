@@ -24,8 +24,20 @@ public class PhysicsEngine {
 
     }
 
-    public void detectCollision() {
+    // Detect Collision between two tokens, where the system checks
+    // if the distance between the two tokens is less than the sum of their radii
+    public boolean detectCollision(Token t1, Token t2) {
+        Vector2D posA = t1.getPosition(); // Position of Token 1
+        Vector2D posB = t2.getPosition(); // Position of Token 2
 
+        // Distances
+        double xdistances = posA.getX() - posB.getX();
+        double ydistances = posA.getY() - posB.getY();
+        double distance = Math.sqrt(xdistances * xdistances + ydistances * ydistances);
+
+        double sumOfRadii = t1.getRadius() + t2.getRadius();
+
+        return distance < sumOfRadii;
     }
 
     public void resolveCollision() {
