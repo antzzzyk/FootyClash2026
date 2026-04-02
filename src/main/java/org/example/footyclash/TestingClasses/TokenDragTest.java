@@ -29,15 +29,15 @@ public class TokenDragTest extends GameApplication {
     private static final float TOKEN_DENSITY = 1.0f;
     private static final float BALL_DENSITY = 0.2f;
     private static final float RESTITUTION = 0.7f;
-    private static final float FRICTION = 0.1f;
-    private static final float DAMPING = 0.6f;
+    private static final float FRICTION = 0.05f;
+    private static final float DAMPING = 1.2f;
 
     private static final double FORCE_MULTIPLIER = 0.75;
     private static final double MIN_VELOCITY_THRESHOLD = 20.0;
     private static final double MAX_DRAG_DISTANCE = 150.0;
 
     private Entity selectedToken;
-    private Rectangle arrowBody;
+    private javafx.scene.shape.Line dragLine;
 
     private Text turnText, forceText, scoreText;
     private boolean isBlueTurn = true;
@@ -67,12 +67,12 @@ public class TokenDragTest extends GameApplication {
         createBall(getAppWidth() / 2.0 - 12, getAppHeight() / 2.0 - 12);
 
         // Visual Indicator (Arrow)
-        arrowBody = new Rectangle(0, 8, Color.YELLOW);
-        arrowBody.setArcWidth(5);
-        arrowBody.setArcHeight(5);
-        arrowBody.setOpacity(0.7);
-        arrowBody.setVisible(false);
-        addUINode(arrowBody);
+        dragLine = new javafx.scene.shape.Line();
+        dragLine.setStroke(Color.YELLOW);
+        dragLine.setStrokeWidth(8);
+        dragLine.setOpacity(0.7);
+        dragLine.setVisible(false);
+        addUINode(dragLine);
     }
 
     private void createToken(double x, double y, Color color, EntityType type) {
@@ -88,7 +88,7 @@ public class TokenDragTest extends GameApplication {
         entityBuilder()
                 .type(type)
                 .at(x, y)
-                .viewWithBBox(new Circle(20, 20, 20, color))
+                .viewWithBBox(new Circle(24, 24, 24, color))
                 .with(physics)
                 .collidable()
                 .buildAndAttach();
@@ -104,10 +104,14 @@ public class TokenDragTest extends GameApplication {
             physics.getBody().setSleepingAllowed(true);
         });
 
+        Circle ballShape = new Circle(16, 16, 16, Color.WHITE);
+        ballShape.setStroke(Color.BLACK);
+        ballShape.setStrokeWidth(3);
+
         entityBuilder()
                 .type(EntityType.BALL)
                 .at(x, y)
-                .viewWithBBox(new Circle(12, 12, 12, Color.BLACK))
+                .viewWithBBox(ballShape)
                 .with(physics)
                 .collidable()
                 .buildAndAttach();
@@ -147,7 +151,7 @@ public class TokenDragTest extends GameApplication {
                         .findFirst()
                         .ifPresent(e -> {
                             selectedToken = e;
-                            arrowBody.setVisible(true);
+                            dragLine.setVisible(true);
                         });
             }
 
@@ -158,14 +162,16 @@ public class TokenDragTest extends GameApplication {
 
                 Point2D mouse = getInput().getMousePositionWorld();
                 Point2D center = selectedToken.getCenter();
-                double dist = mouse.distance(center);
+                Point2D dragVector = center.subtract(mouse); // Reversed for pull-back logic
 
-                arrowBody.setWidth(Math.min(dist, MAX_DRAG_DISTANCE));
-                double angle = Math.toDegrees(Math.atan2(mouse.getY() - center.getY(), mouse.getX() - center.getX()));
-                arrowBody.setRotate(angle);
+                double dist = dragVector.magnitude();
+                double limitedDist = Math.min(dist, MAX_DRAG_DISTANCE);
+                Point2D direction = dragVector.normalize();
 
-                arrowBody.setTranslateX(center.getX());
-                arrowBody.setTranslateY(center.getY() - arrowBody.getHeight() / 2);
+                dragLine.setStartX(center.getX());
+                dragLine.setStartY(center.getY());
+                dragLine.setEndX(center.getX() + direction.getX() * limitedDist);
+                dragLine.setEndY(center.getY() + direction.getY() * limitedDist);
 
                 forceText.setText(String.format("Power: %.0f%%", Math.min((dist / MAX_DRAG_DISTANCE) * 100, 100)));
             }
@@ -175,7 +181,7 @@ public class TokenDragTest extends GameApplication {
                 if (selectedToken == null)
                     return;
 
-                Point2D dragVector = getInput().getMousePositionWorld().subtract(selectedToken.getCenter());
+                Point2D dragVector = selectedToken.getCenter().subtract(getInput().getMousePositionWorld());
 
                 if (dragVector.magnitude() > 10) {
                     double force = dragVector.magnitude() * FORCE_MULTIPLIER;
@@ -186,7 +192,7 @@ public class TokenDragTest extends GameApplication {
                 }
 
                 selectedToken = null;
-                arrowBody.setVisible(false);
+                dragLine.setVisible(false);
             }
         }, MouseButton.PRIMARY);
     }
