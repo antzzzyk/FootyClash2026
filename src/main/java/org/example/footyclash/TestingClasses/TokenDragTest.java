@@ -26,13 +26,13 @@ public class TokenDragTest extends GameApplication {
     }
 
     // --- Physics Constants ---
-    private static final float TOKEN_DENSITY = 1.0f;
+    private static final float TOKEN_DENSITY = 1.0f; // Restored to 1.0f for solid weight
     private static final float BALL_DENSITY = 0.2f;
     private static final float RESTITUTION = 0.7f;
     private static final float FRICTION = 0.05f;
-    private static final float DAMPING = 1.2f;
+    private static final float DAMPING = 1.2f; // Decreased from 1.5f for slightly less drag
 
-    private static final double FORCE_MULTIPLIER = 0.75;
+    private static final double FORCE_MULTIPLIER = 3.5; // Huge increase to give explosive speed off the line
     private static final double MIN_VELOCITY_THRESHOLD = 20.0;
     private static final double MAX_DRAG_DISTANCE = 150.0;
 
@@ -43,6 +43,8 @@ public class TokenDragTest extends GameApplication {
     private boolean isBlueTurn = true;
     private boolean canMove = true;
     private int scoreBlue = 0, scoreRed = 0;
+    private boolean isGoalCelebration = false;
+    private ImageView goalImageView;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -82,6 +84,7 @@ public class TokenDragTest extends GameApplication {
 
         physics.setOnPhysicsInitialized(() -> {
             physics.getBody().setLinearDamping(DAMPING);
+            physics.getBody().setAngularDamping(2.0f);
             physics.getBody().setSleepingAllowed(true);
         });
 
@@ -100,7 +103,8 @@ public class TokenDragTest extends GameApplication {
         physics.setFixtureDef(new FixtureDef().density(BALL_DENSITY).restitution(0.9f).friction(0.01f));
 
         physics.setOnPhysicsInitialized(() -> {
-            physics.getBody().setLinearDamping(DAMPING * 0.7f);
+            physics.getBody().setLinearDamping(DAMPING * 1.5f); // Increased from 0.7f to reduce sliding
+            physics.getBody().setAngularDamping(1.5f);
             physics.getBody().setSleepingAllowed(true);
         });
 
@@ -173,7 +177,8 @@ public class TokenDragTest extends GameApplication {
                 dragLine.setEndX(center.getX() + direction.getX() * limitedDist);
                 dragLine.setEndY(center.getY() + direction.getY() * limitedDist);
 
-                forceText.setText(String.format("Power: %.0f%%", Math.min((dist / MAX_DRAG_DISTANCE) * 100, 100)));
+                double force = limitedDist * FORCE_MULTIPLIER;
+                forceText.setText(String.format("Force: %.1f N", force));
             }
 
             @Override
@@ -182,9 +187,10 @@ public class TokenDragTest extends GameApplication {
                     return;
 
                 Point2D dragVector = selectedToken.getCenter().subtract(getInput().getMousePositionWorld());
+                double limitedDist = Math.min(dragVector.magnitude(), MAX_DRAG_DISTANCE);
 
-                if (dragVector.magnitude() > 10) {
-                    double force = dragVector.magnitude() * FORCE_MULTIPLIER;
+                if (limitedDist > 10) {
+                    double force = limitedDist * FORCE_MULTIPLIER;
                     selectedToken.getComponent(PhysicsComponent.class)
                             .applyLinearImpulse(dragVector.normalize().multiply(force), selectedToken.getCenter(),
                                     true);
@@ -199,7 +205,7 @@ public class TokenDragTest extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {
-        if (!canMove) {
+        if (!canMove && !isGoalCelebration) {
             boolean stillMoving = getGameWorld().getEntitiesByComponent(PhysicsComponent.class).stream()
                     .anyMatch(e -> {
                         PhysicsComponent physics = e.getComponent(PhysicsComponent.class);
@@ -214,7 +220,57 @@ public class TokenDragTest extends GameApplication {
                 isBlueTurn = !isBlueTurn;
             }
         }
+        checkGoals();
         updateUI();
+    }
+
+    private void checkGoals() {
+        if (isGoalCelebration)
+            return;
+
+        getGameWorld().getEntitiesByType(EntityType.BALL).stream().findFirst().ifPresent(ball -> {
+            // Ball's center x coordinate.
+            // Left goal line is roughly at x=60, Right goal line is around x=1040
+            if (ball.getX() < 45) { // Passed the left line entirely
+                scoreRed++;
+                handleGoal(true); // Blue kicks off after Red scores
+            } else if (ball.getX() > 1040) { // Passed the right line entirely
+                scoreBlue++;
+                handleGoal(false); // Red kicks off after Blue scores
+            }
+        });
+    }
+
+    private void handleGoal(boolean nextTurnBlue) {
+        isGoalCelebration = true;
+        canMove = false;
+        goalImageView.setVisible(true);
+
+        getGameTimer().runOnceAfter(() -> {
+            goalImageView.setVisible(false);
+            resetPitch(nextTurnBlue);
+            isGoalCelebration = false;
+        }, javafx.util.Duration.seconds(4));
+    }
+
+    private void resetPitch(boolean nextTurnBlue) {
+        // Remove all physics entities
+        getGameWorld().getEntitiesByType(EntityType.BALL).forEach(Entity::removeFromWorld);
+        getGameWorld().getEntitiesByType(EntityType.TEAM_BLUE).forEach(Entity::removeFromWorld);
+        getGameWorld().getEntitiesByType(EntityType.TEAM_RED).forEach(Entity::removeFromWorld);
+
+        // Respawn teams
+        for (int i = 0; i < 5; i++) {
+            createToken(250, 120 + i * 90, Color.BLUE, EntityType.TEAM_BLUE);
+            createToken(810, 120 + i * 90, Color.RED, EntityType.TEAM_RED);
+        }
+
+        // Respawn ball
+        createBall(getAppWidth() / 2.0 - 12, getAppHeight() / 2.0 - 12);
+
+        // Reset turn state
+        canMove = true;
+        isBlueTurn = nextTurnBlue;
     }
 
     @Override
@@ -225,6 +281,19 @@ public class TokenDragTest extends GameApplication {
         bg.setFitWidth(1100);
         bg.setFitHeight(600);
         getGameScene().addGameView(new com.almasb.fxgl.app.scene.GameView(bg, -1));
+
+        try {
+            Image goalImage = new Image(getClass().getResource("/assets/textures/goal.png").toExternalForm());
+            goalImageView = new ImageView(goalImage);
+        } catch (Exception e) {
+            goalImageView = new ImageView();
+            System.err.println("Place your goal.png image in src/main/resources/assets/textures/goal.png");
+        }
+        goalImageView.setFitWidth(500);
+        goalImageView.setFitHeight(250);
+        goalImageView.setTranslateX((1100 - 500) / 2.0);
+        goalImageView.setTranslateY((600 - 250) / 2.0);
+        goalImageView.setVisible(false);
 
         turnText = new Text();
         turnText.setFont(Font.font("Verdana", 24));
@@ -244,6 +313,7 @@ public class TokenDragTest extends GameApplication {
         addUINode(turnText);
         addUINode(scoreText);
         addUINode(forceText);
+        addUINode(goalImageView);
     }
 
     private void updateUI() {
