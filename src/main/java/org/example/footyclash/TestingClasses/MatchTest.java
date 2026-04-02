@@ -19,7 +19,7 @@ import javafx.scene.text.Text;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
-public class TokenDragTest extends GameApplication {
+public class MatchTest extends GameApplication {
 
     public enum EntityType {
         TEAM_BLUE, TEAM_RED, BALL, WALL
