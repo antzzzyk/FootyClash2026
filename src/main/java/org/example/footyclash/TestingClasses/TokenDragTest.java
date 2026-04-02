@@ -362,4 +362,8 @@ public class TokenDragTest extends GameApplication {
         scoreBlueText.setText(String.valueOf(scoreBlue));
         scoreRedText.setText(String.valueOf(scoreRed));
     }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
 }
