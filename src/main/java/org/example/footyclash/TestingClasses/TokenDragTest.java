@@ -46,7 +46,7 @@ public class TokenDragTest extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setTitle("Footy Clash - Token Drag Test");
+        settings.setTitle("Footy Clash Project - Token Drag Test");
         settings.setWidth(1100);
         settings.setHeight(600);
     }
