@@ -19,7 +19,7 @@ import javafx.scene.text.Text;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
-public class MatchTest extends GameApplication {
+public class TokenDragTest extends GameApplication {
 
     public enum EntityType {
         TEAM_BLUE, TEAM_RED, BALL, WALL
@@ -39,7 +39,8 @@ public class MatchTest extends GameApplication {
     private Entity selectedToken;
     private javafx.scene.shape.Line dragLine;
 
-    private Text turnText, forceText, scoreText;
+    private Text turnText, forceText;
+    private Text scoreBlueText, scoreRedText;
     private boolean isBlueTurn = true;
     private boolean canMove = true;
     private int scoreBlue = 0, scoreRed = 0;
@@ -298,20 +299,59 @@ public class MatchTest extends GameApplication {
         turnText = new Text();
         turnText.setFont(Font.font("Verdana", 24));
         turnText.setTranslateX(440);
-        turnText.setTranslateY(40);
+        turnText.setTranslateY(90); // Moved down slightly below scoreboard
 
-        scoreText = new Text("BLUE: 0 | RED: 0");
-        scoreText.setFont(Font.font("Verdana", 20));
-        scoreText.setTranslateX(460);
-        scoreText.setTranslateY(75);
+        // --- NEW SCOREBOARD ---
+        javafx.scene.layout.HBox scoreboardBox = new javafx.scene.layout.HBox();
+        scoreboardBox.setAlignment(javafx.geometry.Pos.CENTER);
+        scoreboardBox.setTranslateX((1100 - 500) / 2.0); // Center standard 500 width
+        scoreboardBox.setTranslateY(20);
+
+        javafx.scene.layout.HBox leftTeamBox = new javafx.scene.layout.HBox(20);
+        leftTeamBox.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
+        leftTeamBox.setPrefSize(250, 50);
+        leftTeamBox.setStyle("-fx-background-color: white; -fx-background-radius: 25 0 0 25;");
+
+        Text leftName = new Text("CANADA");
+        leftName.setFont(Font.font("Verdana", javafx.scene.text.FontWeight.BOLD, 22));
+        leftName.setFill(Color.web("#CC0000"));
+
+        scoreBlueText = new Text("0");
+        scoreBlueText.setFont(Font.font("Verdana", javafx.scene.text.FontWeight.BOLD, 32));
+        scoreBlueText.setFill(Color.BLACK);
+
+        leftTeamBox.getChildren().addAll(leftName, scoreBlueText);
+        leftTeamBox.setPadding(new javafx.geometry.Insets(0, 40, 0, 0));
+
+        javafx.scene.layout.HBox rightTeamBox = new javafx.scene.layout.HBox(20);
+        rightTeamBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        rightTeamBox.setPrefSize(250, 50);
+        rightTeamBox.setStyle("-fx-background-color: #CC0000; -fx-background-radius: 0 25 25 0;");
+
+        scoreRedText = new Text("0");
+        scoreRedText.setFont(Font.font("Verdana", javafx.scene.text.FontWeight.BOLD, 32));
+        scoreRedText.setFill(Color.BLACK);
+
+        Text rightName = new Text("MOROCCO");
+        rightName.setFont(Font.font("Verdana", javafx.scene.text.FontWeight.BOLD, 22));
+        rightName.setFill(Color.WHITE);
+
+        rightTeamBox.getChildren().addAll(scoreRedText, rightName);
+        rightTeamBox.setPadding(new javafx.geometry.Insets(0, 0, 0, 40));
+
+        scoreboardBox.getChildren().addAll(leftTeamBox, rightTeamBox);
+
+        // Add a subtle drop shadow to make it pop
+        scoreboardBox.setEffect(new javafx.scene.effect.DropShadow(5, Color.color(0, 0, 0, 0.3)));
+        // ----------------------
 
         forceText = new Text("READY");
         forceText.setFont(Font.font("Verdana", 18));
         forceText.setTranslateX(500);
         forceText.setTranslateY(580);
 
+        addUINode(scoreboardBox);
         addUINode(turnText);
-        addUINode(scoreText);
         addUINode(forceText);
         addUINode(goalImageView);
     }
@@ -319,10 +359,7 @@ public class MatchTest extends GameApplication {
     private void updateUI() {
         turnText.setText(canMove ? (isBlueTurn ? "BLUE TURN" : "RED TURN") : "MOVING...");
         turnText.setFill(isBlueTurn ? Color.BLUE : Color.RED);
-        scoreText.setText("BLUE: " + scoreBlue + " | RED: " + scoreRed);
-    }
-
-    public static void main(String[] args) {
-        launch(args);
+        scoreBlueText.setText(String.valueOf(scoreBlue));
+        scoreRedText.setText(String.valueOf(scoreRed));
     }
 }
