@@ -8,6 +8,6 @@ module org.example.footyclash {
     opens org.example.footyclash to javafx.fxml;
 
     exports org.example.footyclash;
-    exports EnzosClasses;
+    exports GameClasses;
     exports org.example.footyclash.TestingClasses;
 }

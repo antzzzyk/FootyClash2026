@@ -1,13 +1,13 @@
-package EnzosClasses;
+package GameClasses;
 
 public class Pitch {
     private static double frictionCoefficient = .3;
 
-    Pitch(){
+    Pitch() {
 
     }
 
-    public static double  getFrictionCoefficient() {
+    public static double getFrictionCoefficient() {
         return frictionCoefficient;
     }
 }

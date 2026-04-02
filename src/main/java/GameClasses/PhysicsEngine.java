@@ -1,4 +1,4 @@
-package EnzosClasses;
+package GameClasses;
 
 import java.util.List;
 

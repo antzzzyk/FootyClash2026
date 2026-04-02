@@ -1,4 +1,4 @@
-package EnzosClasses;
+package GameClasses;
 
 public class Vector2D {
     private double x;

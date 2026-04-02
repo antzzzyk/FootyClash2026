@@ -1,7 +1,7 @@
-package EnzosClasses;
+package GameClasses;
 
 public class Player {
-    private Token[] tokens =  new Token[5];
+    private Token[] tokens = new Token[5];
     private int id;
     private int score;
     private boolean turn;
@@ -13,19 +13,19 @@ public class Player {
         turn = false;
     }
 
-    public int  getScore() {
+    public int getScore() {
         return score;
     }
 
-    public int  getId() {
+    public int getId() {
         return id;
     }
 
-    public void increaseScore(){
+    public void increaseScore() {
         score++;
     }
 
-    public void resetScore(){
+    public void resetScore() {
         score = 0;
     }
 }

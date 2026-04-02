@@ -1,4 +1,4 @@
-package EnzosClasses;
+package GameClasses;
 
 public class Goal {
 }
