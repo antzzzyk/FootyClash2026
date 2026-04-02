@@ -305,20 +305,20 @@ public class TokenDragTest extends GameApplication {
         javafx.scene.layout.HBox scoreboardBox = new javafx.scene.layout.HBox();
         scoreboardBox.setAlignment(javafx.geometry.Pos.CENTER);
         scoreboardBox.setTranslateX((1100 - 500) / 2.0); // Center standard 500 width
-        scoreboardBox.setTranslateY(20);
+        scoreboardBox.setTranslateY(-5); // Moved higher so it doesn't touch the top pitch wall
 
         javafx.scene.layout.HBox leftTeamBox = new javafx.scene.layout.HBox(20);
         leftTeamBox.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
         leftTeamBox.setPrefSize(250, 50);
-        leftTeamBox.setStyle("-fx-background-color: white; -fx-background-radius: 25 0 0 25;");
+        leftTeamBox.setStyle("-fx-background-color: blue; -fx-background-radius: 25 0 0 25;");
 
-        Text leftName = new Text("CANADA");
+        Text leftName = new Text("BLUE");
         leftName.setFont(Font.font("Verdana", javafx.scene.text.FontWeight.BOLD, 22));
-        leftName.setFill(Color.web("#CC0000"));
+        leftName.setFill(Color.WHITE);
 
         scoreBlueText = new Text("0");
         scoreBlueText.setFont(Font.font("Verdana", javafx.scene.text.FontWeight.BOLD, 32));
-        scoreBlueText.setFill(Color.BLACK);
+        scoreBlueText.setFill(Color.WHITE);
 
         leftTeamBox.getChildren().addAll(leftName, scoreBlueText);
         leftTeamBox.setPadding(new javafx.geometry.Insets(0, 40, 0, 0));
@@ -326,13 +326,13 @@ public class TokenDragTest extends GameApplication {
         javafx.scene.layout.HBox rightTeamBox = new javafx.scene.layout.HBox(20);
         rightTeamBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         rightTeamBox.setPrefSize(250, 50);
-        rightTeamBox.setStyle("-fx-background-color: #CC0000; -fx-background-radius: 0 25 25 0;");
+        rightTeamBox.setStyle("-fx-background-color: red; -fx-background-radius: 0 25 25 0;");
 
         scoreRedText = new Text("0");
         scoreRedText.setFont(Font.font("Verdana", javafx.scene.text.FontWeight.BOLD, 32));
-        scoreRedText.setFill(Color.BLACK);
+        scoreRedText.setFill(Color.WHITE);
 
-        Text rightName = new Text("MOROCCO");
+        Text rightName = new Text("RED");
         rightName.setFont(Font.font("Verdana", javafx.scene.text.FontWeight.BOLD, 22));
         rightName.setFill(Color.WHITE);
 
