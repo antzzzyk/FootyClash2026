@@ -30,11 +30,11 @@ public class TokenDragTest extends GameApplication {
     private static final float BALL_DENSITY = 0.2f;
     private static final float RESTITUTION = 0.7f;
     private static final float FRICTION = 0.05f;
-    private static final float DAMPING = 1.2f; // Decreased from 1.5f for slightly less drag
+    private static final float DAMPING = 0.8f; // Decreased from 1.5f for slightly less drag
 
     private static final double FORCE_MULTIPLIER = 3.5; // Huge increase to give explosive speed off the line
     private static final double MIN_VELOCITY_THRESHOLD = 20.0;
-    private static final double MAX_DRAG_DISTANCE = 150.0;
+    private static final double MAX_DRAG_DISTANCE = 165.0;
 
     private Entity selectedToken;
     private javafx.scene.shape.Line dragLine;
@@ -123,12 +123,18 @@ public class TokenDragTest extends GameApplication {
     }
 
     private void createPitchWalls() {
-        createWall(60, 40, 980, 10); // Top
-        createWall(60, 550, 980, 10); // Bottom
-        createWall(60, 50, 10, 180); // Left top
-        createWall(60, 370, 10, 180); // Left bottom
-        createWall(1030, 50, 10, 180); // Right top
-        createWall(1030, 370, 10, 180);// Right bottom
+        createWall(60, 60, 980, 10); // Top
+        createWall(60, 530, 980, 10); // Bottom
+        createWall(67, 50, 10, 180); // Left top
+        createWall(67, 370, 10, 180); // Left bottom
+        createWall(1023, 50, 10, 180); // Right top
+        createWall(1023, 370, 10, 180);// Right bottom
+
+        //Left Goal
+        createWall(10, 0, 10, 1000);
+
+        //Right Goal
+        createWall(1080, 0, 10, 1000);
     }
 
     private void createWall(double x, double y, double w, double h) {
