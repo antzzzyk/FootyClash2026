@@ -1,5 +1,6 @@
 package org.example.footyclash.TestingClasses;
 
+import GameClasses.Pitch;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.entity.Entity;
@@ -29,12 +30,12 @@ public class TokenDragTest extends GameApplication {
     private static final float TOKEN_DENSITY = 1.0f; // Restored to 1.0f for solid weight
     private static final float BALL_DENSITY = 0.2f;
     private static final float RESTITUTION = 0.7f;
-    private static final float FRICTION = 0.05f;
-    private static final float DAMPING = 0.8f; // Decreased from 1.5f for slightly less drag
+    private static final float FRICTION = Pitch.getFrictioncoefficient();
+    private static final float DAMPING = 2f; // Decreased from 1.5f for slightly less drag
 
     private static final double FORCE_MULTIPLIER = 3.5; // Huge increase to give explosive speed off the line
     private static final double MIN_VELOCITY_THRESHOLD = 20.0;
-    private static final double MAX_DRAG_DISTANCE = 165.0;
+    private static final double MAX_DRAG_DISTANCE = 300.0;
 
     private Entity selectedToken;
     private javafx.scene.shape.Line dragLine;
@@ -104,7 +105,7 @@ public class TokenDragTest extends GameApplication {
         physics.setFixtureDef(new FixtureDef().density(BALL_DENSITY).restitution(0.9f).friction(0.01f));
 
         physics.setOnPhysicsInitialized(() -> {
-            physics.getBody().setLinearDamping(DAMPING * 1.5f); // Increased from 0.7f to reduce sliding
+            physics.getBody().setLinearDamping(DAMPING * .5f); // Increased from 0.7f to reduce sliding
             physics.getBody().setAngularDamping(1.5f);
             physics.getBody().setSleepingAllowed(true);
         });
@@ -241,7 +242,7 @@ public class TokenDragTest extends GameApplication {
             if (ball.getX() < 45) { // Passed the left line entirely
                 scoreRed++;
                 handleGoal(true); // Blue kicks off after Red scores
-            } else if (ball.getX() > 1040) { // Passed the right line entirely
+            } else if (ball.getX() > 1030) { // Passed the right line entirely
                 scoreBlue++;
                 handleGoal(false); // Red kicks off after Blue scores
             }
@@ -282,12 +283,7 @@ public class TokenDragTest extends GameApplication {
 
     @Override
     protected void initUI() {
-        Image image = new Image(
-                getClass().getResource("/assets/textures/match.png").toExternalForm());
-        ImageView bg = new ImageView(image);
-        bg.setFitWidth(1100);
-        bg.setFitHeight(600);
-        getGameScene().addGameView(new com.almasb.fxgl.app.scene.GameView(bg, -1));
+        getGameScene().addGameView(new com.almasb.fxgl.app.scene.GameView(new Pitch().getBg(), -1));
 
         try {
             Image goalImage = new Image(getClass().getResource("/assets/textures/goal.png").toExternalForm());
