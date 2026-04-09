@@ -7,6 +7,8 @@ public class Pitch {
     private static final float FRICTIONCOEFFICIENT = .8f;
     private Image image;
     private ImageView bg;
+    private Image goalImage;
+    private ImageView goalImageView;
 
     public Pitch() {
         image = new Image(
@@ -14,6 +16,19 @@ public class Pitch {
         bg = new ImageView(image);
         bg.setFitWidth(1100);
         bg.setFitHeight(600);
+
+        try {
+            goalImage = new Image(getClass().getResource("/assets/textures/goal.png").toExternalForm());
+            goalImageView = new ImageView(goalImage);
+        } catch (Exception e) {
+            goalImageView = new ImageView();
+            System.err.println("Place your goal.png image in src/main/resources/assets/textures/goal.png");
+        }
+        goalImageView.setFitWidth(500);
+        goalImageView.setFitHeight(250);
+        goalImageView.setTranslateX((1100 - 500) / 2.0);
+        goalImageView.setTranslateY((600 - 250) / 2.0);
+        goalImageView.setVisible(false);
     }
 
     public static float getFrictioncoefficient(){
@@ -22,5 +37,9 @@ public class Pitch {
 
     public ImageView getBg(){
         return bg;
+    }
+
+    public ImageView getGoalImageView(){
+        return goalImageView;
     }
 }

@@ -300,7 +300,7 @@ public class TokenDragTest extends GameApplication {
 
         turnText = new Text();
         turnText.setFont(Font.font("Verdana", 24));
-        turnText.setTranslateX(440);
+        turnText.setTranslateX((1100-150)/2);
         turnText.setTranslateY(90); // Moved down slightly below scoreboard
 
         // --- NEW SCOREBOARD ---
