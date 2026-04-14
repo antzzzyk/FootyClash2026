@@ -1,6 +1,8 @@
 package org.example.footyclash.TestingClasses;
 
+import GameClasses.Ball;
 import GameClasses.Pitch;
+import GameClasses.Token;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.entity.Entity;
@@ -27,15 +29,15 @@ public class TokenDragTest extends GameApplication {
     }
 
     // --- Physics Constants ---
-    private static final float TOKEN_DENSITY = 1.0f; // Restored to 1.0f for solid weight
-    private static final float BALL_DENSITY = 0.2f;
-    private static final float RESTITUTION = 0.7f;
+    private static final float TOKEN_DENSITY = Token.getDensity(); // Restored to 1.0f for solid weight
+    private static final float BALL_DENSITY = Ball.getDensity();
+    private static final float RESTITUTION = Pitch.getRESTIRUTION();
     private static final float FRICTION = Pitch.getFrictioncoefficient();
-    private static final float DAMPING = 2f; // Decreased from 1.5f for slightly less drag
+    private static final float DAMPING = Pitch.getDampingcoefficient(); // Decreased from 1.5f for slightly less drag
 
     private static final double FORCE_MULTIPLIER = 3.5; // Huge increase to give explosive speed off the line
     private static final double MIN_VELOCITY_THRESHOLD = 20.0;
-    private static final double MAX_DRAG_DISTANCE = 300.0;
+    private static final double MAX_DRAG_DISTANCE = 150.0;
 
     private Entity selectedToken;
     private javafx.scene.shape.Line dragLine;
@@ -63,8 +65,8 @@ public class TokenDragTest extends GameApplication {
 
         // Spawn Teams
         for (int i = 0; i < 5; i++) {
-            createToken(250, 120 + i * 90, Color.BLUE, EntityType.TEAM_BLUE);
-            createToken(810, 120 + i * 90, Color.RED, EntityType.TEAM_RED);
+            Token.createToken(250, 120 + i * 90, Color.BLUE, EntityType.TEAM_BLUE);
+            Token.createToken(810, 120 + i * 90, Color.RED, EntityType.TEAM_RED);
         }
 
         // Spawn Ball
@@ -77,26 +79,6 @@ public class TokenDragTest extends GameApplication {
         dragLine.setOpacity(0.7);
         dragLine.setVisible(false);
         addUINode(dragLine);
-    }
-
-    private void createToken(double x, double y, Color color, EntityType type) {
-        PhysicsComponent physics = new PhysicsComponent();
-        physics.setBodyType(BodyType.DYNAMIC);
-        physics.setFixtureDef(new FixtureDef().density(TOKEN_DENSITY).restitution(RESTITUTION).friction(FRICTION));
-
-        physics.setOnPhysicsInitialized(() -> {
-            physics.getBody().setLinearDamping(DAMPING);
-            physics.getBody().setAngularDamping(2.0f);
-            physics.getBody().setSleepingAllowed(true);
-        });
-
-        entityBuilder()
-                .type(type)
-                .at(x, y)
-                .viewWithBBox(new Circle(24, 24, 24, color))
-                .with(physics)
-                .collidable()
-                .buildAndAttach();
     }
 
     private void createBall(double x, double y) {
@@ -269,8 +251,8 @@ public class TokenDragTest extends GameApplication {
 
         // Respawn teams
         for (int i = 0; i < 5; i++) {
-            createToken(250, 120 + i * 90, Color.BLUE, EntityType.TEAM_BLUE);
-            createToken(810, 120 + i * 90, Color.RED, EntityType.TEAM_RED);
+            Token.createToken(250, 120 + i * 90, Color.BLUE, EntityType.TEAM_BLUE);
+            Token.createToken(810, 120 + i * 90, Color.RED, EntityType.TEAM_RED);
         }
 
         // Respawn ball

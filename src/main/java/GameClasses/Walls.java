@@ -1,4 +1,4 @@
 package GameClasses;
 
-public class Goal {
+public class Walls {
 }
