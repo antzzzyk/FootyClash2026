@@ -113,10 +113,10 @@ public class TokenDragTest extends GameApplication {
         createWall(1023, 50, 10, 180); // Right top
         createWall(1023, 370, 10, 180);// Right bottom
 
-        //Left Goal
+        // Left Goal
         createWall(10, 0, 10, 1000);
 
-        //Right Goal
+        // Right Goal
         createWall(1080, 0, 10, 1000);
     }
 
@@ -282,7 +282,7 @@ public class TokenDragTest extends GameApplication {
 
         turnText = new Text();
         turnText.setFont(Font.font("Verdana", 24));
-        turnText.setTranslateX((1100-150)/2);
+        turnText.setTranslateX((1100 - 150) / 2);
         turnText.setTranslateY(90); // Moved down slightly below scoreboard
 
         // --- NEW SCOREBOARD ---
