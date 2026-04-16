@@ -4,7 +4,6 @@ module org.example.footyclash {
 
     requires com.almasb.fxgl.all;
     requires javafx.graphics;
-    requires org.example.footyclash;
     requires com.almasb.fxgl.entity;
 
     opens org.example.footyclash to javafx.fxml;
