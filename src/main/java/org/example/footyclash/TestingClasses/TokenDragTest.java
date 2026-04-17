@@ -20,6 +20,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import GameClasses.CustomPhysicsComponent;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -31,7 +32,7 @@ public class TokenDragTest extends GameApplication {
 
     private static final double MIN_VELOCITY_THRESHOLD = 100.0;
     private static final double MAX_DRAG_DISTANCE = 150.0;
-    private static final double FORCE_MULTIPLIER = 750/MAX_DRAG_DISTANCE;
+    private static final double FORCE_MULTIPLIER = 750 / MAX_DRAG_DISTANCE;
 
     private Entity selectedToken;
     private javafx.scene.shape.Line dragLine;
@@ -142,12 +143,12 @@ public class TokenDragTest extends GameApplication {
 
                 if (limitedDist > 10) {
                     double force = limitedDist * FORCE_MULTIPLIER;
-                    selectedToken.getComponent(PhysicsComponent.class)
-                            .applyLinearImpulse(dragVector.normalize().multiply(force), selectedToken.getCenter(),
-                                    true);
+
+                    // Call your custom component and pass the calculated vector
+                    selectedToken.getComponent(CustomPhysicsComponent.class)
+                            .applyImpulse(dragVector.normalize().multiply(force));
                     canMove = false;
                 }
-
                 selectedToken = null;
                 dragLine.setVisible(false);
             }
@@ -156,13 +157,17 @@ public class TokenDragTest extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {
+        checkCustomCollisions();
         if (!canMove && !isGoalCelebration) {
-            boolean stillMoving = getGameWorld().getEntitiesByComponent(PhysicsComponent.class).stream()
+            // Look for entities holding the CustomPhysicsComponent
+            boolean stillMoving = getGameWorld().getEntitiesByComponent(CustomPhysicsComponent.class).stream()
                     .anyMatch(e -> {
-                        PhysicsComponent physics = e.getComponent(PhysicsComponent.class);
-                        double vx = physics.getVelocityX();
-                        double vy = physics.getVelocityY();
-                        // Using square of magnitude for performance
+                        CustomPhysicsComponent customPhysics = e.getComponent(CustomPhysicsComponent.class);
+
+                        // Pull the velocity vector from your custom formulas
+                        double vx = customPhysics.getVelocity().getX();
+                        double vy = customPhysics.getVelocity().getY();
+
                         return (vx * vx + vy * vy) > (MIN_VELOCITY_THRESHOLD * MIN_VELOCITY_THRESHOLD);
                     });
 
@@ -306,6 +311,82 @@ public class TokenDragTest extends GameApplication {
         turnText.setFill(isBlueTurn ? Color.BLUE : Color.RED);
         scoreBlueText.setText(String.valueOf(scoreBlue));
         scoreRedText.setText(String.valueOf(scoreRed));
+    }
+
+    // --- CUSTOM 2D ELASTIC COLLISION ENGINE ---
+    private void checkCustomCollisions() {
+        var entities = getGameWorld().getEntitiesByComponent(CustomPhysicsComponent.class);
+
+        for (int i = 0; i < entities.size(); i++) {
+            for (int j = i + 1; j < entities.size(); j++) {
+                Entity e1 = entities.get(i);
+                Entity e2 = entities.get(j);
+
+                Point2D p1 = e1.getCenter();
+                Point2D p2 = e2.getCenter();
+
+                // 1. Get hitboxes
+                double r1 = e1.getType() == EntityType.BALL ? 16.0 : 24.0;
+                double r2 = e2.getType() == EntityType.BALL ? 16.0 : 24.0;
+                double minDistance = r1 + r2;
+
+                double distance = p1.distance(p2);
+
+                // Prevent zero-distance errors
+                if (distance < minDistance && distance > 0.0001) {
+
+                    // 2. Define Masses (Tokens are Heavy, Ball is Light)
+                    double m1 = e1.getType() == EntityType.BALL ? 1.0 : 5.0;
+                    double m2 = e2.getType() == EntityType.BALL ? 1.0 : 5.0;
+
+                    // In physics engines, we use Inverse Mass for calculations
+                    double invM1 = 1.0 / m1;
+                    double invM2 = 1.0 / m2;
+                    double totalInvMass = invM1 + invM2;
+
+                    Point2D normal = p2.subtract(p1).normalize();
+
+                    // ==========================================
+                    // STEP 3: POSITIONAL CORRECTION (Fixes the Clumping)
+                    // ==========================================
+                    // Separate them immediately before doing velocity math.
+                    // Heavy objects move less, light objects move more!
+                    double overlap = minDistance - distance;
+                    Point2D correction = normal.multiply(overlap / totalInvMass);
+
+                    e1.translate(correction.multiply(-invM1));
+                    e2.translate(correction.multiply(invM2));
+
+                    // ==========================================
+                    // STEP 4: IMPULSE MATH (Fixes the Ball not moving)
+                    // ==========================================
+                    CustomPhysicsComponent phys1 = e1.getComponent(CustomPhysicsComponent.class);
+                    CustomPhysicsComponent phys2 = e2.getComponent(CustomPhysicsComponent.class);
+
+                    Point2D v1 = phys1.getVelocity();
+                    Point2D v2 = phys2.getVelocity();
+                    Point2D relativeVelocity = v1.subtract(v2);
+
+                    double speedOnNormal = relativeVelocity.dotProduct(normal);
+
+                    // If they are already moving apart, skip the bounce!
+                    if (speedOnNormal > 0)
+                        continue;
+
+                    double restitution = 0.8; // Bounciness
+
+                    // The True Elastic Impulse Formula incorporating Mass!
+                    double impulseScalar = -(1 + restitution) * speedOnNormal;
+                    impulseScalar /= totalInvMass;
+
+                    Point2D impulseVector = normal.multiply(impulseScalar);
+
+                    // Apply the new velocities based on mass
+                    phys1.setVelocity(v1.add(impulseVector.multiply(invM1)));
+                    phys2.setVelocity(v2.subtract(impulseVector.multiply(invM2)));
+                }
+            }
+        }
     }
 
     public static void main(String[] args) {
