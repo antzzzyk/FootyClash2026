@@ -9,18 +9,17 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.PhysicsComponent;
-import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
-import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
+import javafx.application.Application;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import GameClasses.CustomPhysicsComponent;
+
+import java.util.List;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -29,6 +28,8 @@ public class TokenDragTest extends GameApplication {
     public enum EntityType {
         TEAM_BLUE, TEAM_RED, BALL, WALL
     }
+
+    private static String[] launchArgs;
 
     private static final double MIN_VELOCITY_THRESHOLD = 100.0;
     private static final double MAX_DRAG_DISTANCE = 150.0;
@@ -390,6 +391,7 @@ public class TokenDragTest extends GameApplication {
     }
 
     public static void main(String[] args) {
+        launchArgs = args;
         launch(args);
     }
 }
