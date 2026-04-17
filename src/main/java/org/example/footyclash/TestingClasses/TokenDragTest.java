@@ -51,8 +51,9 @@ public class TokenDragTest extends GameApplication {
 
     @Override
     protected void initGame() {
-        // FXGL physics (Box2D) removed! Everything uses CustomPhysicsComponent and math.
-        
+        // FXGL physics (Box2D) removed! Everything uses CustomPhysicsComponent and
+        // math.
+
         createPitchWalls();
 
         // Spawn Teams
