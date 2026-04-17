@@ -27,7 +27,8 @@ public class Token extends Circle {
                 .type(type)
                 .at(x, y)
                 .viewWithBBox(new Circle(24, 24, 24, color))
-                .with(new CustomPhysicsComponent()) // 100% Custom Physics
+                // Give the Token a mass of 5.0 and a restitution of 0.8
+                .with(new CustomPhysicsComponent(5.0, 0.8))
                 .collidable() // Tells FXGL to register bounding box overlaps, even without Box2D
                 .buildAndAttach();
     }

@@ -8,16 +8,11 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.physics.PhysicsComponent;
-import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
-import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import GameClasses.CustomPhysicsComponent;
@@ -32,7 +27,9 @@ public class TokenDragTest extends GameApplication {
 
     private static final double MIN_VELOCITY_THRESHOLD = 100.0;
     private static final double MAX_DRAG_DISTANCE = 150.0;
-    private static final double FORCE_MULTIPLIER = 750 / MAX_DRAG_DISTANCE;
+
+    // Reduced force multiplier to keep the speed manageable
+    private static final double FORCE_MULTIPLIER = 30.0;
 
     private Entity selectedToken;
     private javafx.scene.shape.Line dragLine;
@@ -54,8 +51,8 @@ public class TokenDragTest extends GameApplication {
 
     @Override
     protected void initGame() {
-        getPhysicsWorld().setGravity(0, 0);
-
+        // FXGL physics (Box2D) removed! Everything uses CustomPhysicsComponent and math.
+        
         createPitchWalls();
 
         // Spawn Teams
@@ -118,7 +115,7 @@ public class TokenDragTest extends GameApplication {
 
                 Point2D mouse = getInput().getMousePositionWorld();
                 Point2D center = selectedToken.getCenter();
-                Point2D dragVector = center.subtract(mouse); // Reversed for pull-back logic
+                Point2D dragVector = center.subtract(mouse);
 
                 double dist = dragVector.magnitude();
                 double limitedDist = Math.min(dist, MAX_DRAG_DISTANCE);
@@ -144,11 +141,12 @@ public class TokenDragTest extends GameApplication {
                 if (limitedDist > 10) {
                     double force = limitedDist * FORCE_MULTIPLIER;
 
-                    // Call your custom component and pass the calculated vector
                     selectedToken.getComponent(CustomPhysicsComponent.class)
                             .applyImpulse(dragVector.normalize().multiply(force));
+
                     canMove = false;
                 }
+
                 selectedToken = null;
                 dragLine.setVisible(false);
             }
@@ -158,13 +156,12 @@ public class TokenDragTest extends GameApplication {
     @Override
     protected void onUpdate(double tpf) {
         checkCustomCollisions();
+
         if (!canMove && !isGoalCelebration) {
-            // Look for entities holding the CustomPhysicsComponent
             boolean stillMoving = getGameWorld().getEntitiesByComponent(CustomPhysicsComponent.class).stream()
                     .anyMatch(e -> {
                         CustomPhysicsComponent customPhysics = e.getComponent(CustomPhysicsComponent.class);
 
-                        // Pull the velocity vector from your custom formulas
                         double vx = customPhysics.getVelocity().getX();
                         double vy = customPhysics.getVelocity().getY();
 
@@ -185,14 +182,12 @@ public class TokenDragTest extends GameApplication {
             return;
 
         getGameWorld().getEntitiesByType(EntityType.BALL).stream().findFirst().ifPresent(ball -> {
-            // Ball's center x coordinate.
-            // Left goal line is roughly at x=60, Right goal line is around x=1040
-            if (ball.getX() < 45) { // Passed the left line entirely
+            if (ball.getX() < 45) {
                 scoreRed++;
-                handleGoal(true); // Blue kicks off after Red scores
-            } else if (ball.getX() > 1030) { // Passed the right line entirely
+                handleGoal(true);
+            } else if (ball.getX() > 1030) {
                 scoreBlue++;
-                handleGoal(false); // Red kicks off after Blue scores
+                handleGoal(false);
             }
         });
     }
@@ -210,21 +205,17 @@ public class TokenDragTest extends GameApplication {
     }
 
     private void resetPitch(boolean nextTurnBlue) {
-        // Remove all physics entities
         getGameWorld().getEntitiesByType(EntityType.BALL).forEach(Entity::removeFromWorld);
         getGameWorld().getEntitiesByType(EntityType.TEAM_BLUE).forEach(Entity::removeFromWorld);
         getGameWorld().getEntitiesByType(EntityType.TEAM_RED).forEach(Entity::removeFromWorld);
 
-        // Respawn teams
         for (int i = 0; i < 5; i++) {
             Token.createToken(250, 120 + i * 90, Color.BLUE, EntityType.TEAM_BLUE);
             Token.createToken(810, 120 + i * 90, Color.RED, EntityType.TEAM_RED);
         }
 
-        // Respawn ball
         Ball.createBall(getAppWidth() / 2.0 - 12, getAppHeight() / 2.0 - 12);
 
-        // Reset turn state
         canMove = true;
         isBlueTurn = nextTurnBlue;
     }
@@ -249,13 +240,12 @@ public class TokenDragTest extends GameApplication {
         turnText = new Text();
         turnText.setFont(Font.font("Verdana", 24));
         turnText.setTranslateX((1100 - 150) / 2);
-        turnText.setTranslateY(90); // Moved down slightly below scoreboard
+        turnText.setTranslateY(90);
 
-        // --- NEW SCOREBOARD ---
         javafx.scene.layout.HBox scoreboardBox = new javafx.scene.layout.HBox();
         scoreboardBox.setAlignment(javafx.geometry.Pos.CENTER);
-        scoreboardBox.setTranslateX((1100 - 500) / 2.0); // Center standard 500 width
-        scoreboardBox.setTranslateY(-5); // Moved higher so it doesn't touch the top pitch wall
+        scoreboardBox.setTranslateX((1100 - 500) / 2.0);
+        scoreboardBox.setTranslateY(-5);
 
         javafx.scene.layout.HBox leftTeamBox = new javafx.scene.layout.HBox(20);
         leftTeamBox.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
@@ -290,10 +280,7 @@ public class TokenDragTest extends GameApplication {
         rightTeamBox.setPadding(new javafx.geometry.Insets(0, 0, 0, 40));
 
         scoreboardBox.getChildren().addAll(leftTeamBox, rightTeamBox);
-
-        // Add a subtle drop shadow to make it pop
         scoreboardBox.setEffect(new javafx.scene.effect.DropShadow(5, Color.color(0, 0, 0, 0.3)));
-        // ----------------------
 
         forceText = new Text("READY");
         forceText.setFont(Font.font("Verdana", 18));
@@ -325,43 +312,31 @@ public class TokenDragTest extends GameApplication {
                 Point2D p1 = e1.getCenter();
                 Point2D p2 = e2.getCenter();
 
-                // 1. Get hitboxes
                 double r1 = e1.getType() == EntityType.BALL ? 16.0 : 24.0;
                 double r2 = e2.getType() == EntityType.BALL ? 16.0 : 24.0;
                 double minDistance = r1 + r2;
 
                 double distance = p1.distance(p2);
 
-                // Prevent zero-distance errors
                 if (distance < minDistance && distance > 0.0001) {
 
-                    // 2. Define Masses (Tokens are Heavy, Ball is Light)
-                    double m1 = e1.getType() == EntityType.BALL ? 1.0 : 5.0;
-                    double m2 = e2.getType() == EntityType.BALL ? 1.0 : 5.0;
+                    CustomPhysicsComponent phys1 = e1.getComponent(CustomPhysicsComponent.class);
+                    CustomPhysicsComponent phys2 = e2.getComponent(CustomPhysicsComponent.class);
 
-                    // In physics engines, we use Inverse Mass for calculations
+                    double m1 = phys1.getMass();
+                    double m2 = phys2.getMass();
+
                     double invM1 = 1.0 / m1;
                     double invM2 = 1.0 / m2;
                     double totalInvMass = invM1 + invM2;
 
                     Point2D normal = p2.subtract(p1).normalize();
 
-                    // ==========================================
-                    // STEP 3: POSITIONAL CORRECTION (Fixes the Clumping)
-                    // ==========================================
-                    // Separate them immediately before doing velocity math.
-                    // Heavy objects move less, light objects move more!
                     double overlap = minDistance - distance;
                     Point2D correction = normal.multiply(overlap / totalInvMass);
 
                     e1.translate(correction.multiply(-invM1));
                     e2.translate(correction.multiply(invM2));
-
-                    // ==========================================
-                    // STEP 4: IMPULSE MATH (Fixes the Ball not moving)
-                    // ==========================================
-                    CustomPhysicsComponent phys1 = e1.getComponent(CustomPhysicsComponent.class);
-                    CustomPhysicsComponent phys2 = e2.getComponent(CustomPhysicsComponent.class);
 
                     Point2D v1 = phys1.getVelocity();
                     Point2D v2 = phys2.getVelocity();
@@ -369,21 +344,64 @@ public class TokenDragTest extends GameApplication {
 
                     double speedOnNormal = relativeVelocity.dotProduct(normal);
 
-                    // If they are already moving apart, skip the bounce!
-                    if (speedOnNormal > 0)
+                    if (speedOnNormal < 0) {
                         continue;
+                    }
 
-                    double restitution = 0.8; // Bounciness
+                    double restitution = Math.min(phys1.getRestitution(), phys2.getRestitution());
 
-                    // The True Elastic Impulse Formula incorporating Mass!
                     double impulseScalar = -(1 + restitution) * speedOnNormal;
                     impulseScalar /= totalInvMass;
 
                     Point2D impulseVector = normal.multiply(impulseScalar);
 
-                    // Apply the new velocities based on mass
                     phys1.setVelocity(v1.add(impulseVector.multiply(invM1)));
                     phys2.setVelocity(v2.subtract(impulseVector.multiply(invM2)));
+                }
+            }
+        }
+
+        // --- Custom Token vs Wall Collisions ---
+        var walls = getGameWorld().getEntitiesByType(EntityType.WALL);
+        for (Entity e : entities) {
+            CustomPhysicsComponent phys = e.getComponent(CustomPhysicsComponent.class);
+            Point2D pos = e.getCenter();
+            double radius = e.getType() == EntityType.BALL ? 16.0 : 24.0;
+
+            for (Entity wall : walls) {
+                double wx = wall.getX();
+                double wy = wall.getY();
+                double ww = wall.getWidth();
+                double wh = wall.getHeight();
+
+                // Find nearest point on the wall rectangle to the token's center
+                double nearestX = Math.max(wx, Math.min(pos.getX(), wx + ww));
+                double nearestY = Math.max(wy, Math.min(pos.getY(), wy + wh));
+
+                double dx = pos.getX() - nearestX;
+                double dy = pos.getY() - nearestY;
+                double distanceSq = dx * dx + dy * dy;
+
+                if (distanceSq < radius * radius && distanceSq > 0.0001) {
+                    double distance = Math.sqrt(distanceSq);
+
+                    double normalX = dx / distance;
+                    double normalY = dy / distance;
+
+                    // Depenetrate: push token completely out of the wall
+                    double overlap = radius - distance;
+                    e.translate(normalX * overlap, normalY * overlap);
+
+                    Point2D vel = phys.getVelocity();
+                    double dotProduct = vel.getX() * normalX + vel.getY() * normalY;
+
+                    // Apply reflection only if the token is moving towards the wall
+                    if (dotProduct < 0) {
+                        double wallRestitution = 0.8; // Bounce factor off the wall
+                        double restitution = phys.getRestitution() * wallRestitution;
+                        double scalar = -(1 + restitution) * dotProduct;
+                        phys.setVelocity(vel.add(normalX * scalar, normalY * scalar));
+                    }
                 }
             }
         }

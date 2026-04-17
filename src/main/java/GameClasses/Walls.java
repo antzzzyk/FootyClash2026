@@ -1,6 +1,5 @@
 package GameClasses;
 
-import com.almasb.fxgl.physics.PhysicsComponent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import org.example.footyclash.TestingClasses.TokenDragTest;
@@ -14,7 +13,7 @@ public class Walls {
                 .type(TokenDragTest.EntityType.WALL)
                 .at(x, y)
                 .viewWithBBox(new Rectangle(w, h, Color.TRANSPARENT))
-                .with(new PhysicsComponent())
+                // Removed integrated PhysicsComponent, walls are pure custom logic now!
                 .buildAndAttach();
     }
 }

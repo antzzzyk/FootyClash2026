@@ -22,7 +22,8 @@ public class Ball extends Token {
                 .type(TokenDragTest.EntityType.BALL)
                 .at(x, y)
                 .viewWithBBox(ballShape)
-                .with(new CustomPhysicsComponent()) // 100% Custom Physics
+                // Give the Ball a mass of 1.0 and a restitution of 0.9 (slightly bouncier!)
+                .with(new CustomPhysicsComponent(1.0, 0.9))
                 .collidable()
                 .buildAndAttach();
     }
