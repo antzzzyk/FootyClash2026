@@ -178,18 +178,19 @@ public class TokenDragTestANT extends GameApplication {
 
                 Point2D mouse = getInput().getMousePositionWorld();
                 Point2D center = selectedToken.getCenter();
-                Point2D dragVector = center.subtract(mouse); // Reversed for pull-back logic
 
+                // Drag Vector
+                Point2D dragVector = center.subtract(mouse); // Reversed for pull-back logic
                 double dist = dragVector.magnitude();
-                double limitedDist = Math.min(dist, MAX_DRAG_DISTANCE);
+                double limitedDistance = Math.min(dist, MAX_DRAG_DISTANCE);
                 Point2D direction = dragVector.normalize();
 
                 dragLine.setStartX(center.getX());
                 dragLine.setStartY(center.getY());
-                dragLine.setEndX(center.getX() + direction.getX() * limitedDist);
-                dragLine.setEndY(center.getY() + direction.getY() * limitedDist);
+                dragLine.setEndX(center.getX() + direction.getX() * limitedDistance);
+                dragLine.setEndY(center.getY() + direction.getY() * limitedDistance);
 
-                double force = limitedDist * FORCE_MULTIPLIER;
+                double force = limitedDistance * FORCE_MULTIPLIER;
                 forceText.setText(String.format("Force: %.1f N", force));
             }
 
@@ -199,10 +200,10 @@ public class TokenDragTestANT extends GameApplication {
                     return;
 
                 Point2D dragVector = selectedToken.getCenter().subtract(getInput().getMousePositionWorld());
-                double limitedDist = Math.min(dragVector.magnitude(), MAX_DRAG_DISTANCE);
+                double limitedDistance = Math.min(dragVector.magnitude(), MAX_DRAG_DISTANCE);
 
-                if (limitedDist > 10) {
-                    double force = limitedDist * FORCE_MULTIPLIER;
+                if (limitedDistance > 10) {
+                    double force = limitedDistance * FORCE_MULTIPLIER;
                     selectedToken.getComponent(PhysicsComponent.class)
                             .applyLinearImpulse(dragVector.normalize().multiply(force), selectedToken.getCenter(),
                                     true);
@@ -254,9 +255,8 @@ public class TokenDragTestANT extends GameApplication {
 
                         // Apply continuous drag force
                         com.almasb.fxgl.core.math.Vec2 dragForceVec = new com.almasb.fxgl.core.math.Vec2(
-                                (float) (dirX * dragMagnitude), 
-                                (float) (dirY * dragMagnitude)
-                        );
+                                (float) (dirX * dragMagnitude),
+                                (float) (dirY * dragMagnitude));
                         physics.applyBodyForceToCenter(dragForceVec);
                     }
                 });
