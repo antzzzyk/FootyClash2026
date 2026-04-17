@@ -3,6 +3,7 @@ package org.example.footyclash.TestingClasses;
 import GameClasses.Ball;
 import GameClasses.Pitch;
 import GameClasses.Token;
+import GameClasses.Walls;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.entity.Entity;
@@ -28,16 +29,9 @@ public class TokenDragTest extends GameApplication {
         TEAM_BLUE, TEAM_RED, BALL, WALL
     }
 
-    // --- Physics Constants ---
-    private static final float TOKEN_DENSITY = Token.getDensity(); // Restored to 1.0f for solid weight
-    private static final float BALL_DENSITY = Ball.getDensity();
-    private static final float RESTITUTION = Pitch.getRESTIRUTION();
-    private static final float FRICTION = Pitch.getFrictioncoefficient();
-    private static final float DAMPING = Pitch.getDampingcoefficient(); // Decreased from 1.5f for slightly less drag
-
-    private static final double FORCE_MULTIPLIER = 3.5; // Huge increase to give explosive speed off the line
-    private static final double MIN_VELOCITY_THRESHOLD = 20.0;
+    private static final double MIN_VELOCITY_THRESHOLD = 100.0;
     private static final double MAX_DRAG_DISTANCE = 150.0;
+    private static final double FORCE_MULTIPLIER = 750/MAX_DRAG_DISTANCE;
 
     private Entity selectedToken;
     private javafx.scene.shape.Line dragLine;
@@ -70,7 +64,7 @@ public class TokenDragTest extends GameApplication {
         }
 
         // Spawn Ball
-        createBall(getAppWidth() / 2.0 - 12, getAppHeight() / 2.0 - 12);
+        Ball.createBall(getAppWidth() / 2.0 - 12, getAppHeight() / 2.0 - 12);
 
         // Visual Indicator (Arrow)
         dragLine = new javafx.scene.shape.Line();
@@ -81,52 +75,19 @@ public class TokenDragTest extends GameApplication {
         addUINode(dragLine);
     }
 
-    private void createBall(double x, double y) {
-        PhysicsComponent physics = new PhysicsComponent();
-        physics.setBodyType(BodyType.DYNAMIC);
-        physics.setFixtureDef(new FixtureDef().density(BALL_DENSITY).restitution(0.9f).friction(0.01f));
-
-        physics.setOnPhysicsInitialized(() -> {
-            physics.getBody().setLinearDamping(DAMPING * .5f); // Increased from 0.7f to reduce sliding
-            physics.getBody().setAngularDamping(1.5f);
-            physics.getBody().setSleepingAllowed(true);
-        });
-
-        Circle ballShape = new Circle(16, 16, 16, Color.WHITE);
-        ballShape.setStroke(Color.BLACK);
-        ballShape.setStrokeWidth(3);
-
-        entityBuilder()
-                .type(EntityType.BALL)
-                .at(x, y)
-                .viewWithBBox(ballShape)
-                .with(physics)
-                .collidable()
-                .buildAndAttach();
-    }
-
     private void createPitchWalls() {
-        createWall(60, 60, 980, 10); // Top
-        createWall(60, 530, 980, 10); // Bottom
-        createWall(67, 50, 10, 180); // Left top
-        createWall(67, 370, 10, 180); // Left bottom
-        createWall(1023, 50, 10, 180); // Right top
-        createWall(1023, 370, 10, 180);// Right bottom
+        Walls.createWall(60, 60, 980, 10); // Top
+        Walls.createWall(60, 530, 980, 10); // Bottom
+        Walls.createWall(67, 50, 10, 180); // Left top
+        Walls.createWall(67, 370, 10, 180); // Left bottom
+        Walls.createWall(1023, 50, 10, 180); // Right top
+        Walls.createWall(1023, 370, 10, 180);// Right bottom
 
         // Left Goal
-        createWall(10, 0, 10, 1000);
+        Walls.createWall(10, 0, 10, 1000);
 
         // Right Goal
-        createWall(1080, 0, 10, 1000);
-    }
-
-    private void createWall(double x, double y, double w, double h) {
-        entityBuilder()
-                .type(EntityType.WALL)
-                .at(x, y)
-                .viewWithBBox(new Rectangle(w, h, Color.TRANSPARENT))
-                .with(new PhysicsComponent())
-                .buildAndAttach();
+        Walls.createWall(1080, 0, 10, 1000);
     }
 
     @Override
@@ -256,7 +217,7 @@ public class TokenDragTest extends GameApplication {
         }
 
         // Respawn ball
-        createBall(getAppWidth() / 2.0 - 12, getAppHeight() / 2.0 - 12);
+        Ball.createBall(getAppWidth() / 2.0 - 12, getAppHeight() / 2.0 - 12);
 
         // Reset turn state
         canMove = true;

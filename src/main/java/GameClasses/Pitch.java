@@ -6,7 +6,6 @@ import javafx.scene.image.ImageView;
 public class Pitch {
     private static final float FRICTIONCOEFFICIENT = 3f;
     private static final float DAMPINGCOEFFICITENT = 1f;
-    private static final float RESTIRUTION = 0.7f;
     private Image image;
     private ImageView bg;
     private Image goalImage;
@@ -39,10 +38,6 @@ public class Pitch {
 
     public static float getDampingcoefficient(){
         return DAMPINGCOEFFICITENT;
-    }
-
-    public static float getRESTIRUTION(){
-        return RESTIRUTION;
     }
 
     public ImageView getBg(){
