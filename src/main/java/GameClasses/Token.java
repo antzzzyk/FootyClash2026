@@ -13,6 +13,7 @@ public class Token extends Circle {
 
     private static final float DENSITY = 1f;
     private static final float ANGULARDAMPING = 2f;
+    private static final float RESTITUTION = 0.7f;
 
     // FIX 1: Initialize these immediately to prevent the NullPointerException!
     private Vector2D position = new Vector2D(0, 0);
@@ -33,7 +34,7 @@ public class Token extends Circle {
     public static void createToken(double x, double y, Color color, TokenDragTest.EntityType type) {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
-        physics.setFixtureDef(new FixtureDef().density(DENSITY).restitution(Pitch.getRESTIRUTION()).friction(Pitch.getFrictioncoefficient()));
+        physics.setFixtureDef(new FixtureDef().density(DENSITY).restitution(RESTITUTION).friction(Pitch.getFrictioncoefficient()));
 
         physics.setOnPhysicsInitialized(() -> {
             physics.getBody().setLinearDamping(Pitch.getDampingcoefficient());

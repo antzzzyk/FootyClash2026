@@ -72,6 +72,8 @@ public class TokenDragTestANT extends GameApplication {
         // Spawn Ball
         createBall(getAppWidth() / 2.0 - 12, getAppHeight() / 2.0 - 12);
 
+
+
         // Visual Indicator (Arrow)
         dragLine = new javafx.scene.shape.Line();
         dragLine.setStroke(Color.YELLOW);
@@ -83,7 +85,7 @@ public class TokenDragTestANT extends GameApplication {
 
     private void createToken(double x, double y, Color color, EntityType type) {
         PhysicsComponent physics = new PhysicsComponent();
-        physics.setBodyType(BodyType.DYNAMIC);
+        physics.setBodyType(BodyType.KINEMATIC);
         physics.setFixtureDef(new FixtureDef().density(TOKEN_DENSITY).restitution(RESTITUTION).friction(FRICTION));
 
         physics.setOnPhysicsInitialized(() -> {
