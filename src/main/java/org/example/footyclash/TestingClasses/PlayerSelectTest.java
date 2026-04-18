@@ -52,80 +52,87 @@ public class PlayerSelectTest extends GameApplication {
         // The buttons to swtich will in the middle, one at the left extreme another in
         // the right extreme
 
-        // Dummy list of skin locations (you can update these paths when you have the
-        // images)
-        String[] skins = { "/assets/textures/plain.png", "/assets/textures/goal.png" };
-        int[] p1SkinIndex = { 0 };
-        int[] p2SkinIndex = { 0 };
+        // List of colors for tokens
+        javafx.scene.paint.Color[] colors = {
+            javafx.scene.paint.Color.BLUE,
+            javafx.scene.paint.Color.RED,
+            javafx.scene.paint.Color.GREEN,
+            javafx.scene.paint.Color.YELLOW,
+            javafx.scene.paint.Color.ORANGE,
+            javafx.scene.paint.Color.PURPLE,
+            javafx.scene.paint.Color.CYAN,
+            javafx.scene.paint.Color.MAGENTA,
+            javafx.scene.paint.Color.PINK
+        };
+        int[] p1ColorIndex = { 0 }; // Default BLUE
+        int[] p2ColorIndex = { 1 }; // Default RED
 
         // --- PLAYER 1 SETUP ---
-        javafx.scene.image.ImageView p1Token = new javafx.scene.image.ImageView();
-        p1Token.setFitWidth(150);
-        p1Token.setFitHeight(150);
-        javafx.scene.shape.Circle clip1 = new javafx.scene.shape.Circle(75, 75, 75);
-        p1Token.setClip(clip1);
-        p1Token.setTranslateX(200); // Adjust this to center in the left grey rectangle
-        p1Token.setTranslateY(225);
+        javafx.scene.shape.Circle p1Circle = new javafx.scene.shape.Circle(75, 75, 75);
+        p1Circle.setFill(colors[p1ColorIndex[0]]);
+        p1Circle.setStroke(javafx.scene.paint.Color.BLACK);
+        p1Circle.setStrokeWidth(3);
+        p1Circle.setTranslateX(200); // Adjust this to center in the left grey rectangle
+        p1Circle.setTranslateY(225);
 
         javafx.scene.control.Button p1Prev = new javafx.scene.control.Button("<");
-        p1Prev.setStyle(
-                "-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold;");
+        p1Prev.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold; -fx-cursor: hand;");
         p1Prev.setTranslateX(65);
         p1Prev.setTranslateY(260);
 
         javafx.scene.control.Button p1Next = new javafx.scene.control.Button(">");
-        p1Next.setStyle(
-                "-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold;");
+        p1Next.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold; -fx-cursor: hand;");
         p1Next.setTranslateX(290);
         p1Next.setTranslateY(260);
 
         p1Prev.setOnAction(e -> {
-            p1SkinIndex[0] = (p1SkinIndex[0] - 1 + skins.length) % skins.length;
-            // p1Token.setImage(new
-            // Image(getClass().getResource(skins[p1SkinIndex[0]]).toExternalForm()));
+            do {
+                p1ColorIndex[0] = (p1ColorIndex[0] - 1 + colors.length) % colors.length;
+            } while (p1ColorIndex[0] == p2ColorIndex[0]);
+            p1Circle.setFill(colors[p1ColorIndex[0]]);
         });
 
         p1Next.setOnAction(e -> {
-            p1SkinIndex[0] = (p1SkinIndex[0] + 1) % skins.length;
-            // p1Token.setImage(new
-            // Image(getClass().getResource(skins[p1SkinIndex[0]]).toExternalForm()));
+            do {
+                p1ColorIndex[0] = (p1ColorIndex[0] + 1) % colors.length;
+            } while (p1ColorIndex[0] == p2ColorIndex[0]);
+            p1Circle.setFill(colors[p1ColorIndex[0]]);
         });
 
         // --- PLAYER 2 SETUP ---
-        javafx.scene.image.ImageView p2Token = new javafx.scene.image.ImageView();
-        p2Token.setFitWidth(150);
-        p2Token.setFitHeight(150);
-        javafx.scene.shape.Circle clip2 = new javafx.scene.shape.Circle(75, 75, 75);
-        p2Token.setClip(clip2);
-        p2Token.setTranslateX(750); // Adjust this to center in the right grey rectangle
-        p2Token.setTranslateY(225);
+        javafx.scene.shape.Circle p2Circle = new javafx.scene.shape.Circle(75, 75, 75);
+        p2Circle.setFill(colors[p2ColorIndex[0]]);
+        p2Circle.setStroke(javafx.scene.paint.Color.BLACK);
+        p2Circle.setStrokeWidth(3);
+        p2Circle.setTranslateX(750); // Adjust this to center in the right grey rectangle
+        p2Circle.setTranslateY(225);
 
         javafx.scene.control.Button p2Prev = new javafx.scene.control.Button("<");
-        p2Prev.setStyle(
-                "-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold;");
+        p2Prev.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold; -fx-cursor: hand;");
         p2Prev.setTranslateX(740);
         p2Prev.setTranslateY(260);
 
         javafx.scene.control.Button p2Next = new javafx.scene.control.Button(">");
-        p2Next.setStyle(
-                "-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold;");
+        p2Next.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold; -fx-cursor: hand;");
         p2Next.setTranslateX(965);
         p2Next.setTranslateY(260);
 
         p2Prev.setOnAction(e -> {
-            p2SkinIndex[0] = (p2SkinIndex[0] - 1 + skins.length) % skins.length;
-            // p2Token.setImage(new
-            // Image(getClass().getResource(skins[p2SkinIndex[0]]).toExternalForm()));
+            do {
+                p2ColorIndex[0] = (p2ColorIndex[0] - 1 + colors.length) % colors.length;
+            } while (p2ColorIndex[0] == p1ColorIndex[0]);
+            p2Circle.setFill(colors[p2ColorIndex[0]]);
         });
 
         p2Next.setOnAction(e -> {
-            p2SkinIndex[0] = (p2SkinIndex[0] + 1) % skins.length;
-            // p2Token.setImage(new
-            // Image(getClass().getResource(skins[p2SkinIndex[0]]).toExternalForm()));
+            do {
+                p2ColorIndex[0] = (p2ColorIndex[0] + 1) % colors.length;
+            } while (p2ColorIndex[0] == p1ColorIndex[0]);
+            p2Circle.setFill(colors[p2ColorIndex[0]]);
         });
 
         // Add nodes to the scene
-        getGameScene().addUINodes(p1Token, p1Prev, p1Next, p2Token, p2Prev, p2Next);
+        getGameScene().addUINodes(p1Circle, p1Prev, p1Next, p2Circle, p2Prev, p2Next);
     }
 
     public static void main(String[] args) {
