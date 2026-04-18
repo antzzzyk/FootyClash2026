@@ -34,13 +34,16 @@ public class TokenDragTest extends GameApplication {
     private Entity selectedToken;
     private javafx.scene.shape.Line dragLine;
 
-    private Text turnText, forceText;
+    private Text turnText, forceText, vectorText, physicsText;
     private Text scoreBlueText, scoreRedText;
     private boolean isBlueTurn = true;
     private boolean canMove = true;
     private int scoreBlue = 0, scoreRed = 0;
     private boolean isGoalCelebration = false;
-    private ImageView goalImageView;
+    private Text goalText;
+
+    private Entity activeToken;
+    private Point2D lastVelocity = Point2D.ZERO;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -105,7 +108,10 @@ public class TokenDragTest extends GameApplication {
                         .findFirst()
                         .ifPresent(e -> {
                             selectedToken = e;
+                            activeToken = e;
+                            lastVelocity = Point2D.ZERO;
                             dragLine.setVisible(true);
+                            resetPhysicsText();
                         });
             }
 
@@ -129,6 +135,19 @@ public class TokenDragTest extends GameApplication {
 
                 double force = limitedDist * FORCE_MULTIPLIER;
                 forceText.setText(String.format("Force: %.1f N", force));
+
+                double displayX = -direction.getX() * force;
+                double displayY = direction.getY() * force;
+                double angle = Math.toDegrees(Math.atan2(displayY, displayX));
+                if (angle < 0)
+                    angle += 360;
+
+                vectorText.setText(String.format("Vector: (%.1f, %.1f)   Angle: %.0f°", displayX, displayY, angle));
+
+                double mass = selectedToken.getComponent(CustomPhysicsComponent.class).getMass();
+                double a = force / mass;
+                double v = force / mass;
+                physicsText.setText(String.format("m: %.1f kg   a: %.1f   v: %.1f", mass, a, v));
             }
 
             @Override
@@ -142,10 +161,13 @@ public class TokenDragTest extends GameApplication {
                 if (limitedDist > 10) {
                     double force = limitedDist * FORCE_MULTIPLIER;
 
-                    selectedToken.getComponent(CustomPhysicsComponent.class)
-                            .applyImpulse(dragVector.normalize().multiply(force));
+                    CustomPhysicsComponent phys = selectedToken.getComponent(CustomPhysicsComponent.class);
+                    phys.applyImpulse(dragVector.normalize().multiply(force));
 
+                    lastVelocity = phys.getVelocity();
                     canMove = false;
+                } else {
+                    resetPhysicsText();
                 }
 
                 selectedToken = null;
@@ -172,6 +194,31 @@ public class TokenDragTest extends GameApplication {
             if (!stillMoving) {
                 canMove = true;
                 isBlueTurn = !isBlueTurn;
+            } else if (activeToken != null) {
+                CustomPhysicsComponent phys = activeToken.getComponent(CustomPhysicsComponent.class);
+                Point2D vel = phys.getVelocity();
+                double vMag = vel.magnitude();
+
+                Point2D accelVec = vel.subtract(lastVelocity).multiply(1.0 / tpf);
+                double aMag = accelVec.magnitude();
+                
+                double mass = phys.getMass();
+                double fMag = mass * aMag; // Friction force
+
+                lastVelocity = vel;
+
+                double displayX = vel.getX();
+                double displayY = -vel.getY();
+                double angle = Math.toDegrees(Math.atan2(displayY, displayX));
+                if (angle < 0) angle += 360;
+
+                if (vMag < 1) {
+                    resetPhysicsText();
+                } else {
+                    forceText.setText(String.format("Force: %.1f N", fMag));
+                    vectorText.setText(String.format("Vector: (%.1f, %.1f)   Angle: %.0f°", displayX, displayY, angle));
+                    physicsText.setText(String.format("m: %.1f kg   a: %.1f   v: %.1f", mass, aMag, vMag));
+                }
             }
         }
         checkGoals();
@@ -196,10 +243,19 @@ public class TokenDragTest extends GameApplication {
     private void handleGoal(boolean nextTurnBlue) {
         isGoalCelebration = true;
         canMove = false;
-        goalImageView.setVisible(true);
+
+        goalText.setTranslateY(700);
+        goalText.setVisible(true);
+
+        javafx.animation.TranslateTransition tt = new javafx.animation.TranslateTransition(
+                javafx.util.Duration.seconds(1.2), goalText);
+        tt.setFromY(700);
+        tt.setToY(320);
+        tt.setInterpolator(javafx.animation.Interpolator.EASE_OUT);
+        tt.play();
 
         getGameTimer().runOnceAfter(() -> {
-            goalImageView.setVisible(false);
+            goalText.setVisible(false);
             resetPitch(nextTurnBlue);
             isGoalCelebration = false;
         }, javafx.util.Duration.seconds(4));
@@ -225,23 +281,20 @@ public class TokenDragTest extends GameApplication {
     protected void initUI() {
         getGameScene().addGameView(new com.almasb.fxgl.app.scene.GameView(new Pitch().getBg(), -1));
 
-        try {
-            Image goalImage = new Image(getClass().getResource("/assets/textures/goal.png").toExternalForm());
-            goalImageView = new ImageView(goalImage);
-        } catch (Exception e) {
-            goalImageView = new ImageView();
-            System.err.println("Place your goal.png image in src/main/resources/assets/textures/goal.png");
-        }
-        goalImageView.setFitWidth(500);
-        goalImageView.setFitHeight(250);
-        goalImageView.setTranslateX((1100 - 500) / 2.0);
-        goalImageView.setTranslateY((600 - 250) / 2.0);
-        goalImageView.setVisible(false);
+        goalText = new Text("GOAL!!!");
+        goalText.setFont(Font.font("Verdana", javafx.scene.text.FontWeight.BOLD, 100));
+        goalText.setFill(Color.YELLOW);
+        goalText.setStroke(Color.BLACK);
+        goalText.setStrokeWidth(4);
+        goalText.setEffect(new javafx.scene.effect.DropShadow(10, Color.BLACK));
+        goalText.setTranslateX(1100 / 2.0 - 230); // Approximate center for this text size
+        goalText.setTranslateY(700);
+        goalText.setVisible(false);
 
         turnText = new Text();
         turnText.setFont(Font.font("Verdana", 24));
-        turnText.setTranslateX((1100 - 150) / 2);
-        turnText.setTranslateY(90);
+        turnText.setTranslateX(920); // Top right corner (approx right-aligned)
+        turnText.setTranslateY(40); // Above the pitch (top wall is at Y=60)
 
         javafx.scene.layout.HBox scoreboardBox = new javafx.scene.layout.HBox();
         scoreboardBox.setAlignment(javafx.geometry.Pos.CENTER);
@@ -283,22 +336,39 @@ public class TokenDragTest extends GameApplication {
         scoreboardBox.getChildren().addAll(leftTeamBox, rightTeamBox);
         scoreboardBox.setEffect(new javafx.scene.effect.DropShadow(5, Color.color(0, 0, 0, 0.3)));
 
-        forceText = new Text("READY");
+        forceText = new Text("Force: 0.0 N");
         forceText.setFont(Font.font("Verdana", 18));
-        forceText.setTranslateX(500);
-        forceText.setTranslateY(580);
+
+        vectorText = new Text("Vector: (0.0, 0.0)   Angle: 0°");
+        vectorText.setFont(Font.font("Verdana", 18));
+
+        physicsText = new Text("m: 0.0 kg   a: 0.0   v: 0.0");
+        physicsText.setFont(Font.font("Verdana", 18));
+
+        javafx.scene.layout.HBox bottomBox = new javafx.scene.layout.HBox(30);
+        bottomBox.setAlignment(javafx.geometry.Pos.CENTER);
+        bottomBox.setPrefWidth(1100);
+        bottomBox.setTranslateY(560);
+        bottomBox.getChildren().addAll(vectorText, forceText, physicsText);
 
         addUINode(scoreboardBox);
         addUINode(turnText);
-        addUINode(forceText);
-        addUINode(goalImageView);
+        addUINode(bottomBox);
+        addUINode(goalText);
     }
 
     private void updateUI() {
-        turnText.setText(canMove ? (isBlueTurn ? "BLUE TURN" : "RED TURN") : "MOVING...");
-        turnText.setFill(isBlueTurn ? Color.BLUE : Color.RED);
+        turnText.setText(canMove ? (isBlueTurn ? "P1's TURN" : "P2's TURN") : "MOVING...");
+        turnText.setFill(Color.WHITE);
         scoreBlueText.setText(String.valueOf(scoreBlue));
         scoreRedText.setText(String.valueOf(scoreRed));
+    }
+
+    private void resetPhysicsText() {
+        if (forceText == null || vectorText == null || physicsText == null) return;
+        forceText.setText("Force: 0.0 N");
+        vectorText.setText("Vector: (0.0, 0.0)   Angle: 0°");
+        physicsText.setText("m: 0.0 kg   a: 0.0   v: 0.0");
     }
 
     // --- CUSTOM 2D ELASTIC COLLISION ENGINE ---
