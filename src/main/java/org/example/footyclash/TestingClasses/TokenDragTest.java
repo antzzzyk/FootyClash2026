@@ -1,5 +1,6 @@
 package org.example.footyclash.TestingClasses;
 
+//match class
 import GameClasses.Ball;
 import GameClasses.Pitch;
 import GameClasses.Token;
@@ -201,7 +202,7 @@ public class TokenDragTest extends GameApplication {
 
                 Point2D accelVec = vel.subtract(lastVelocity).multiply(1.0 / tpf);
                 double aMag = accelVec.magnitude();
-                
+
                 double mass = phys.getMass();
                 double fMag = mass * aMag; // Friction force
 
@@ -210,7 +211,8 @@ public class TokenDragTest extends GameApplication {
                 double displayX = vel.getX();
                 double displayY = -vel.getY();
                 double angle = Math.toDegrees(Math.atan2(displayY, displayX));
-                if (angle < 0) angle += 360;
+                if (angle < 0)
+                    angle += 360;
 
                 if (vMag < 1) {
                     resetPhysicsText();
@@ -365,7 +367,8 @@ public class TokenDragTest extends GameApplication {
     }
 
     private void resetPhysicsText() {
-        if (forceText == null || vectorText == null || physicsText == null) return;
+        if (forceText == null || vectorText == null || physicsText == null)
+            return;
         forceText.setText("Force: 0.0 N");
         vectorText.setText("Vector: (0.0, 0.0)   Angle: 0°");
         physicsText.setText("m: 0.0 kg   a: 0.0   v: 0.0");
