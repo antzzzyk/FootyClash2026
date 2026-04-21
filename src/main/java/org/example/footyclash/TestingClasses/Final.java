@@ -27,7 +27,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class Final extends GameApplication {
 
     public enum GameState {
-        MAIN_MENU, PLAYER_SELECT, MATCH
+        MAIN_MENU, PLAYER_SELECT, MATCH, WINNER
     }
 
     private GameState gameState = GameState.MAIN_MENU;
@@ -68,10 +68,12 @@ public class Final extends GameApplication {
         getInput().addAction(new UserAction("Drag") {
             @Override
             protected void onActionBegin() {
-                if (gameState != GameState.MATCH || !canMove) return;
+                if (gameState != GameState.MATCH || !canMove)
+                    return;
 
                 Point2D mouse = getInput().getMousePositionWorld();
-                TokenDragTest.EntityType team = isBlueTurn ? TokenDragTest.EntityType.TEAM_BLUE : TokenDragTest.EntityType.TEAM_RED;
+                TokenDragTest.EntityType team = isBlueTurn ? TokenDragTest.EntityType.TEAM_BLUE
+                        : TokenDragTest.EntityType.TEAM_RED;
 
                 getGameWorld().getEntitiesByType(team).stream()
                         .filter(e -> e.getCenter().distance(mouse) < 30)
@@ -87,7 +89,8 @@ public class Final extends GameApplication {
 
             @Override
             protected void onAction() {
-                if (gameState != GameState.MATCH || selectedToken == null) return;
+                if (gameState != GameState.MATCH || selectedToken == null)
+                    return;
 
                 Point2D mouse = getInput().getMousePositionWorld();
                 Point2D center = selectedToken.getCenter();
@@ -108,7 +111,8 @@ public class Final extends GameApplication {
                 double displayX = -direction.getX() * force;
                 double displayY = direction.getY() * force;
                 double angle = Math.toDegrees(Math.atan2(displayY, displayX));
-                if (angle < 0) angle += 360;
+                if (angle < 0)
+                    angle += 360;
 
                 vectorText.setText(String.format("Vector: (%.1f, %.1f)   Angle: %.0f°", displayX, displayY, angle));
 
@@ -120,7 +124,8 @@ public class Final extends GameApplication {
 
             @Override
             protected void onActionEnd() {
-                if (gameState != GameState.MATCH || selectedToken == null) return;
+                if (gameState != GameState.MATCH || selectedToken == null)
+                    return;
 
                 Point2D dragVector = selectedToken.getCenter().subtract(getInput().getMousePositionWorld());
                 double limitedDist = Math.min(dragVector.magnitude(), MAX_DRAG_DISTANCE);
@@ -152,7 +157,7 @@ public class Final extends GameApplication {
     private void buildMainMenu() {
         getGameScene().clearUINodes();
         getGameScene().clearGameViews();
-        getGameWorld().getEntities().forEach(Entity::removeFromWorld);
+        new java.util.ArrayList<>(getGameWorld().getEntities()).forEach(Entity::removeFromWorld);
 
         Image image = new Image(getClass().getResource("/assets/textures/mainmenu.png").toExternalForm());
         ImageView bg = new ImageView(image);
@@ -164,7 +169,8 @@ public class Final extends GameApplication {
 
         Button startBtn = new Button("Start");
         startBtn.setPrefSize(250, 80);
-        startBtn.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-color: blue; -fx-text-fill: white;");
+        startBtn.setStyle(
+                "-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-color: blue; -fx-text-fill: white;");
 
         startBtn.setOnAction(e -> {
             gameState = GameState.PLAYER_SELECT;
@@ -182,7 +188,7 @@ public class Final extends GameApplication {
     // --- PHASE 2: PLAYER SELECT ---
     private void buildPlayerSelectUI() {
         getGameScene().clearUINodes();
-        
+
         Image image = new Image(getClass().getResource("/assets/textures/tokenselect.png").toExternalForm());
         ImageView bg = new ImageView(image);
         bg.setFitWidth(getAppWidth());
@@ -217,12 +223,14 @@ public class Final extends GameApplication {
         p1ColorText.setTranslateY(150);
 
         Button p1Prev = new Button("<");
-        p1Prev.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold; -fx-cursor: hand;");
+        p1Prev.setStyle(
+                "-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold; -fx-cursor: hand;");
         p1Prev.setTranslateX(65);
         p1Prev.setTranslateY(260);
 
         Button p1Next = new Button(">");
-        p1Next.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold; -fx-cursor: hand;");
+        p1Next.setStyle(
+                "-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold; -fx-cursor: hand;");
         p1Next.setTranslateX(290);
         p1Next.setTranslateY(260);
 
@@ -258,12 +266,14 @@ public class Final extends GameApplication {
         p2ColorText.setTranslateY(150);
 
         Button p2Prev = new Button("<");
-        p2Prev.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold; -fx-cursor: hand;");
+        p2Prev.setStyle(
+                "-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold; -fx-cursor: hand;");
         p2Prev.setTranslateX(740);
         p2Prev.setTranslateY(260);
 
         Button p2Next = new Button(">");
-        p2Next.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold; -fx-cursor: hand;");
+        p2Next.setStyle(
+                "-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold; -fx-cursor: hand;");
         p2Next.setTranslateX(965);
         p2Next.setTranslateY(260);
 
@@ -284,7 +294,8 @@ public class Final extends GameApplication {
         });
 
         Button startButton = new Button("START MATCH");
-        startButton.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-background-color: #00FF00; -fx-text-fill: black;");
+        startButton.setStyle(
+                "-fx-font-size: 24px; -fx-font-weight: bold; -fx-background-color: #00FF00; -fx-text-fill: black;");
         startButton.setPrefSize(250, 60);
         startButton.setTranslateX((getAppWidth() - 250) / 2.0);
         startButton.setTranslateY(450);
@@ -292,20 +303,20 @@ public class Final extends GameApplication {
         startButton.setOnAction(e -> {
             c1 = colors[p1ColorIndex[0]];
             c2 = colors[p2ColorIndex[0]];
-            
+
             gameState = GameState.MATCH;
             buildMatch();
         });
 
         getGameScene().addUINodes(p1ColorText, p1Circle, p1Prev, p1Next,
-                                  p2ColorText, p2Circle, p2Prev, p2Next, startButton);
+                p2ColorText, p2Circle, p2Prev, p2Next, startButton);
     }
 
     // --- PHASE 3: MATCH ---
     private void buildMatch() {
         getGameScene().clearUINodes();
-        getGameWorld().getEntities().forEach(Entity::removeFromWorld);
-        
+        new java.util.ArrayList<>(getGameWorld().getEntities()).forEach(Entity::removeFromWorld);
+
         getGameScene().addGameView(new com.almasb.fxgl.app.scene.GameView(new Pitch().getBg(), -1));
 
         createPitchWalls();
@@ -323,7 +334,7 @@ public class Final extends GameApplication {
         dragLine.setOpacity(0.7);
         dragLine.setVisible(false);
         addUINode(dragLine);
-        
+
         buildMatchUI();
     }
 
@@ -352,7 +363,7 @@ public class Final extends GameApplication {
         leftTeamBox.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
         leftTeamBox.setPrefSize(250, 50);
         String styleC1 = String.format("-fx-background-color: #%02X%02X%02X; -fx-background-radius: 25 0 0 25;",
-                (int)(c1.getRed() * 255), (int)(c1.getGreen() * 255), (int)(c1.getBlue() * 255));
+                (int) (c1.getRed() * 255), (int) (c1.getGreen() * 255), (int) (c1.getBlue() * 255));
         leftTeamBox.setStyle(styleC1);
 
         Text leftName = new Text("P1");
@@ -370,7 +381,7 @@ public class Final extends GameApplication {
         rightTeamBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         rightTeamBox.setPrefSize(250, 50);
         String styleC2 = String.format("-fx-background-color: #%02X%02X%02X; -fx-background-radius: 0 25 25 0;",
-                (int)(c2.getRed() * 255), (int)(c2.getGreen() * 255), (int)(c2.getBlue() * 255));
+                (int) (c2.getRed() * 255), (int) (c2.getGreen() * 255), (int) (c2.getBlue() * 255));
         rightTeamBox.setStyle(styleC2);
 
         scoreRedText = new Text("0");
@@ -432,7 +443,8 @@ public class Final extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {
-        if (gameState != GameState.MATCH) return;
+        if (gameState != GameState.MATCH)
+            return;
 
         checkCustomCollisions();
 
@@ -463,7 +475,8 @@ public class Final extends GameApplication {
                 double displayX = vel.getX();
                 double displayY = -vel.getY();
                 double angle = Math.toDegrees(Math.atan2(displayY, displayX));
-                if (angle < 0) angle += 360;
+                if (angle < 0)
+                    angle += 360;
 
                 if (vMag < 1) {
                     resetPhysicsText();
@@ -479,7 +492,8 @@ public class Final extends GameApplication {
     }
 
     private void checkGoals() {
-        if (isGoalCelebration) return;
+        if (isGoalCelebration)
+            return;
 
         getGameWorld().getEntitiesByType(TokenDragTest.EntityType.BALL).stream().findFirst().ifPresent(ball -> {
             if (ball.getX() < 45) {
@@ -498,26 +512,17 @@ public class Final extends GameApplication {
 
         boolean isGameOver = (scoreBlue >= 3 || scoreRed >= 3);
 
-        if (isGameOver) {
-            String winner = scoreBlue >= 3 ? "Player 1" : "Player 2";
-            goalText.setText("GAME OVER!\n" + winner + " Wins!");
-            goalText.setFont(Font.font("Verdana", javafx.scene.text.FontWeight.BOLD, 70));
-            goalText.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
-            goalText.setTranslateX(getAppWidth() / 2.0 - 225);
-        } else {
-            goalText.setText("GOAL!!!");
-            goalText.setFont(Font.font("Verdana", javafx.scene.text.FontWeight.BOLD, 100));
-            goalText.setTextAlignment(javafx.scene.text.TextAlignment.LEFT);
-            goalText.setTranslateX(getAppWidth() / 2.0 - 230);
-        }
-
+        goalText.setText("GOAL!!!");
+        goalText.setFont(Font.font("Verdana", javafx.scene.text.FontWeight.BOLD, 100));
+        goalText.setTextAlignment(javafx.scene.text.TextAlignment.LEFT);
+        goalText.setTranslateX(getAppWidth() / 2.0 - 230);
         goalText.setTranslateY(700);
         goalText.setVisible(true);
 
         javafx.animation.TranslateTransition tt = new javafx.animation.TranslateTransition(
                 javafx.util.Duration.seconds(1.2), goalText);
         tt.setFromY(700);
-        tt.setToY(isGameOver ? 240 : 320);
+        tt.setToY(320);
         tt.setInterpolator(javafx.animation.Interpolator.EASE_OUT);
         tt.play();
 
@@ -529,13 +534,11 @@ public class Final extends GameApplication {
             }, javafx.util.Duration.seconds(4));
         } else {
             getGameTimer().runOnceAfter(() -> {
-                scoreBlue = 0;
-                scoreRed = 0;
                 isGoalCelebration = false;
                 canMove = true;
-                gameState = GameState.MAIN_MENU;
-                buildMainMenu();
-            }, javafx.util.Duration.seconds(5));
+                gameState = GameState.WINNER;
+                buildWinnerUI();
+            }, javafx.util.Duration.seconds(4));
         }
     }
 
@@ -567,7 +570,8 @@ public class Final extends GameApplication {
     }
 
     private void resetPhysicsText() {
-        if (forceText == null || vectorText == null || physicsText == null) return;
+        if (forceText == null || vectorText == null || physicsText == null)
+            return;
         forceText.setText("Force: 0.0 N");
         vectorText.setText("Vector: (0.0, 0.0)   Angle: 0°");
         physicsText.setText("m: 0.0 kg   a: 0.0   v: 0.0");
@@ -611,7 +615,8 @@ public class Final extends GameApplication {
                     Point2D relativeVelocity = v1.subtract(v2);
 
                     double speedOnNormal = relativeVelocity.dotProduct(normal);
-                    if (speedOnNormal < 0) continue;
+                    if (speedOnNormal < 0)
+                        continue;
 
                     double restitution = Math.min(phys1.getRestitution(), phys2.getRestitution());
                     double impulseScalar = -(1 + restitution) * speedOnNormal;
@@ -661,6 +666,43 @@ public class Final extends GameApplication {
                 }
             }
         }
+    }
+
+    // --- PHASE 4: WINNER ---
+    private void buildWinnerUI() {
+        getGameScene().clearUINodes();
+        getGameScene().clearGameViews();
+        new java.util.ArrayList<>(getGameWorld().getEntities()).forEach(Entity::removeFromWorld);
+
+        Image image = new Image(getClass().getResource("/assets/textures/winner.png").toExternalForm());
+        ImageView bg = new ImageView(image);
+        bg.setFitWidth(getAppWidth());
+        bg.setFitHeight(getAppHeight());
+        getGameScene().addUINode(bg);
+
+        String winnerStr = scoreBlue >= 3 ? "Player 1 Wins!" : "Player 2 Wins!";
+        Text winnerText = new Text(winnerStr);
+        winnerText.setFill(Color.WHITE);
+        winnerText.setStroke(Color.BLACK);
+        winnerText.setStrokeWidth(2);
+        winnerText.setTranslateX(getAppWidth() / 2.0 - 250);
+        winnerText.setTranslateY(150);
+
+        Button menuBtn = new Button("Main Menu");
+        menuBtn.setPrefSize(200, 60);
+        menuBtn.setStyle(
+                "-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-color: blue; -fx-text-fill: white;");
+        menuBtn.setTranslateX(getAppWidth() / 2.0 - 100);
+        menuBtn.setTranslateY(500);
+
+        menuBtn.setOnAction(e -> {
+            scoreBlue = 0;
+            scoreRed = 0;
+            gameState = GameState.MAIN_MENU;
+            buildMainMenu();
+        });
+
+        getGameScene().addUINodes(winnerText, menuBtn);
     }
 
     public static void main(String[] args) {
