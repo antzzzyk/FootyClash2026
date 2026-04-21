@@ -84,6 +84,14 @@ public class Final extends GameApplication {
                             lastVelocity = Point2D.ZERO;
                             dragLine.setVisible(true);
                             resetPhysicsText();
+
+                            // Highlight selected token with a border
+                            e.getViewComponent().getChildren().forEach(node -> {
+                                if (node instanceof Circle) {
+                                    ((Circle) node).setStroke(Color.YELLOW);
+                                    ((Circle) node).setStrokeWidth(4);
+                                }
+                            });
                         });
             }
 
@@ -141,6 +149,14 @@ public class Final extends GameApplication {
                 } else {
                     resetPhysicsText();
                 }
+
+                // Remove the border highlight
+                selectedToken.getViewComponent().getChildren().forEach(node -> {
+                    if (node instanceof Circle) {
+                        ((Circle) node).setStroke(Color.TRANSPARENT);
+                        ((Circle) node).setStrokeWidth(0);
+                    }
+                });
 
                 selectedToken = null;
                 dragLine.setVisible(false);
@@ -321,10 +337,7 @@ public class Final extends GameApplication {
 
         createPitchWalls();
 
-        for (int i = 0; i < 5; i++) {
-            Token.createToken(250, 120 + i * 90, c1, TokenDragTest.EntityType.TEAM_BLUE);
-            Token.createToken(810, 120 + i * 90, c2, TokenDragTest.EntityType.TEAM_RED);
-        }
+        spawnTokens();
 
         Ball.createBall(getAppWidth() / 2.0 - 12, getAppHeight() / 2.0 - 12);
 
@@ -547,15 +560,36 @@ public class Final extends GameApplication {
         getGameWorld().getEntitiesByType(TokenDragTest.EntityType.TEAM_BLUE).forEach(Entity::removeFromWorld);
         getGameWorld().getEntitiesByType(TokenDragTest.EntityType.TEAM_RED).forEach(Entity::removeFromWorld);
 
-        for (int i = 0; i < 5; i++) {
-            Token.createToken(250, 120 + i * 90, c1, TokenDragTest.EntityType.TEAM_BLUE);
-            Token.createToken(810, 120 + i * 90, c2, TokenDragTest.EntityType.TEAM_RED);
-        }
+        spawnTokens();
 
         Ball.createBall(getAppWidth() / 2.0 - 12, getAppHeight() / 2.0 - 12);
 
         canMove = true;
         isBlueTurn = nextTurnBlue;
+    }
+
+    private void spawnTokens() {
+        // Team Blue Formation (3-2-1)
+        // 3 at the back
+        Token.createToken(166, 156, c1, TokenDragTest.EntityType.TEAM_BLUE);
+        Token.createToken(166, 276, c1, TokenDragTest.EntityType.TEAM_BLUE);
+        Token.createToken(166, 396, c1, TokenDragTest.EntityType.TEAM_BLUE);
+        // 2 in front (Midfield)
+        Token.createToken(286, 216, c1, TokenDragTest.EntityType.TEAM_BLUE);
+        Token.createToken(286, 336, c1, TokenDragTest.EntityType.TEAM_BLUE);
+        // 1 on top (Striker)
+        Token.createToken(406, 276, c1, TokenDragTest.EntityType.TEAM_BLUE);
+
+        // Team Red Formation (3-2-1)
+        // 3 at the back
+        Token.createToken(886, 156, c2, TokenDragTest.EntityType.TEAM_RED);
+        Token.createToken(886, 276, c2, TokenDragTest.EntityType.TEAM_RED);
+        Token.createToken(886, 396, c2, TokenDragTest.EntityType.TEAM_RED);
+        // 2 in front (Midfield)
+        Token.createToken(766, 216, c2, TokenDragTest.EntityType.TEAM_RED);
+        Token.createToken(766, 336, c2, TokenDragTest.EntityType.TEAM_RED);
+        // 1 on top (Striker)
+        Token.createToken(646, 276, c2, TokenDragTest.EntityType.TEAM_RED);
     }
 
     private void updateUI() {
