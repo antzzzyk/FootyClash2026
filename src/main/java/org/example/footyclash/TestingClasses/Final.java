@@ -414,6 +414,16 @@ public class Final extends GameApplication {
 
         Walls.createWall(10, 0, 10, 1000); // Left Goal
         Walls.createWall(1080, 0, 10, 1000); // Right Goal
+
+        // --- NEW GOAL NET WALLS ---
+
+        // Left Goal Posts (Top and Bottom)
+        Walls.createWall(10, 220, 57, 10); // Left Goal Top net
+        Walls.createWall(10, 370, 57, 10); // Left Goal Bottom net
+
+        // Right Goal Posts (Top and Bottom)
+        Walls.createWall(1023, 220, 57, 10); // Right Goal Top net
+        Walls.createWall(1023, 370, 57, 10); // Right Goal Bottom net
     }
 
     @Override
