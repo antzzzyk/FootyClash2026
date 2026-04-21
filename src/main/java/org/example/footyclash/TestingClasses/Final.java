@@ -682,17 +682,32 @@ public class Final extends GameApplication {
 
         String winnerStr = scoreBlue >= 3 ? "Player 1 Wins!" : "Player 2 Wins!";
         Text winnerText = new Text(winnerStr);
+        winnerText.setFont(Font.font("Verdana", javafx.scene.text.FontWeight.BOLD, 60));
         winnerText.setFill(Color.WHITE);
         winnerText.setStroke(Color.BLACK);
         winnerText.setStrokeWidth(2);
         winnerText.setTranslateX(getAppWidth() / 2.0 - 250);
         winnerText.setTranslateY(150);
 
+        Button restartBtn = new Button("Restart Match");
+        restartBtn.setPrefSize(200, 60);
+        restartBtn.setStyle(
+                "-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-color: green; -fx-text-fill: white;");
+        restartBtn.setTranslateX(getAppWidth() / 2.0 - 220);
+        restartBtn.setTranslateY(500);
+
+        restartBtn.setOnAction(e -> {
+            scoreBlue = 0;
+            scoreRed = 0;
+            gameState = GameState.MATCH;
+            buildMatch();
+        });
+
         Button menuBtn = new Button("Main Menu");
         menuBtn.setPrefSize(200, 60);
         menuBtn.setStyle(
                 "-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-color: blue; -fx-text-fill: white;");
-        menuBtn.setTranslateX(getAppWidth() / 2.0 - 100);
+        menuBtn.setTranslateX(getAppWidth() / 2.0 + 20);
         menuBtn.setTranslateY(500);
 
         menuBtn.setOnAction(e -> {
@@ -702,7 +717,7 @@ public class Final extends GameApplication {
             buildMainMenu();
         });
 
-        getGameScene().addUINodes(winnerText, menuBtn);
+        getGameScene().addUINodes(winnerText, restartBtn, menuBtn);
     }
 
     public static void main(String[] args) {
