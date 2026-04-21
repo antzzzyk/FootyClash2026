@@ -486,21 +486,47 @@ public class Final extends GameApplication {
         isGoalCelebration = true;
         canMove = false;
 
+        boolean isGameOver = (scoreBlue >= 3 || scoreRed >= 3);
+
+        if (isGameOver) {
+            String winner = scoreBlue >= 3 ? "Player 1" : "Player 2";
+            goalText.setText("GAME OVER!\n" + winner + " Wins!");
+            goalText.setFont(Font.font("Verdana", javafx.scene.text.FontWeight.BOLD, 70));
+            goalText.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+            goalText.setTranslateX(getAppWidth() / 2.0 - 225);
+        } else {
+            goalText.setText("GOAL!!!");
+            goalText.setFont(Font.font("Verdana", javafx.scene.text.FontWeight.BOLD, 100));
+            goalText.setTextAlignment(javafx.scene.text.TextAlignment.LEFT);
+            goalText.setTranslateX(getAppWidth() / 2.0 - 230);
+        }
+
         goalText.setTranslateY(700);
         goalText.setVisible(true);
 
         javafx.animation.TranslateTransition tt = new javafx.animation.TranslateTransition(
                 javafx.util.Duration.seconds(1.2), goalText);
         tt.setFromY(700);
-        tt.setToY(320);
+        tt.setToY(isGameOver ? 240 : 320);
         tt.setInterpolator(javafx.animation.Interpolator.EASE_OUT);
         tt.play();
 
-        getGameTimer().runOnceAfter(() -> {
-            goalText.setVisible(false);
-            resetPitch(nextTurnBlue);
-            isGoalCelebration = false;
-        }, javafx.util.Duration.seconds(4));
+        if (!isGameOver) {
+            getGameTimer().runOnceAfter(() -> {
+                goalText.setVisible(false);
+                resetPitch(nextTurnBlue);
+                isGoalCelebration = false;
+            }, javafx.util.Duration.seconds(4));
+        } else {
+            getGameTimer().runOnceAfter(() -> {
+                scoreBlue = 0;
+                scoreRed = 0;
+                isGoalCelebration = false;
+                canMove = true;
+                gameState = GameState.MAIN_MENU;
+                buildMainMenu();
+            }, javafx.util.Duration.seconds(5));
+        }
     }
 
     private void resetPitch(boolean nextTurnBlue) {
