@@ -351,7 +351,9 @@ public class Final extends GameApplication {
         javafx.scene.layout.HBox leftTeamBox = new javafx.scene.layout.HBox(20);
         leftTeamBox.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
         leftTeamBox.setPrefSize(250, 50);
-        leftTeamBox.setStyle("-fx-background-color: blue; -fx-background-radius: 25 0 0 25;");
+        String styleC1 = String.format("-fx-background-color: #%02X%02X%02X; -fx-background-radius: 25 0 0 25;",
+                (int)(c1.getRed() * 255), (int)(c1.getGreen() * 255), (int)(c1.getBlue() * 255));
+        leftTeamBox.setStyle(styleC1);
 
         Text leftName = new Text("P1");
         leftName.setFont(Font.font("Verdana", javafx.scene.text.FontWeight.BOLD, 22));
@@ -367,7 +369,9 @@ public class Final extends GameApplication {
         javafx.scene.layout.HBox rightTeamBox = new javafx.scene.layout.HBox(20);
         rightTeamBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         rightTeamBox.setPrefSize(250, 50);
-        rightTeamBox.setStyle("-fx-background-color: red; -fx-background-radius: 0 25 25 0;");
+        String styleC2 = String.format("-fx-background-color: #%02X%02X%02X; -fx-background-radius: 0 25 25 0;",
+                (int)(c2.getRed() * 255), (int)(c2.getGreen() * 255), (int)(c2.getBlue() * 255));
+        rightTeamBox.setStyle(styleC2);
 
         scoreRedText = new Text("0");
         scoreRedText.setFont(Font.font("Verdana", javafx.scene.text.FontWeight.BOLD, 32));
