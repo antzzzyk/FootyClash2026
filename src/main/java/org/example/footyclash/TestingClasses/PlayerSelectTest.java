@@ -57,15 +57,15 @@ public class PlayerSelectTest extends GameApplication {
 
         // List of colors for tokens
         javafx.scene.paint.Color[] colors = {
-            javafx.scene.paint.Color.BLUE,
-            javafx.scene.paint.Color.RED,
-            javafx.scene.paint.Color.GREEN,
-            javafx.scene.paint.Color.YELLOW,
-            javafx.scene.paint.Color.ORANGE,
-            javafx.scene.paint.Color.PURPLE,
-            javafx.scene.paint.Color.CYAN,
-            javafx.scene.paint.Color.MAGENTA,
-            javafx.scene.paint.Color.PINK
+                javafx.scene.paint.Color.BLUE,
+                javafx.scene.paint.Color.RED,
+                javafx.scene.paint.Color.GREEN,
+                javafx.scene.paint.Color.YELLOW,
+                javafx.scene.paint.Color.ORANGE,
+                javafx.scene.paint.Color.PURPLE,
+                javafx.scene.paint.Color.CYAN,
+                javafx.scene.paint.Color.MAGENTA,
+                javafx.scene.paint.Color.PINK
         };
         int[] p1ColorIndex = { 0 }; // Default BLUE
         int[] p2ColorIndex = { 1 }; // Default RED
@@ -75,16 +75,18 @@ public class PlayerSelectTest extends GameApplication {
         p1Circle.setFill(colors[p1ColorIndex[0]]);
         p1Circle.setStroke(javafx.scene.paint.Color.BLACK);
         p1Circle.setStrokeWidth(3);
-        p1Circle.setTranslateX(200); // Adjust this to center in the left grey rectangle
+        p1Circle.setTranslateX(140); // Adjust this to center in the left grey rectangle
         p1Circle.setTranslateY(225);
 
         javafx.scene.control.Button p1Prev = new javafx.scene.control.Button("<");
-        p1Prev.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold; -fx-cursor: hand;");
+        p1Prev.setStyle(
+                "-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold; -fx-cursor: hand;");
         p1Prev.setTranslateX(65);
         p1Prev.setTranslateY(260);
 
         javafx.scene.control.Button p1Next = new javafx.scene.control.Button(">");
-        p1Next.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold; -fx-cursor: hand;");
+        p1Next.setStyle(
+                "-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold; -fx-cursor: hand;");
         p1Next.setTranslateX(290);
         p1Next.setTranslateY(260);
 
@@ -107,16 +109,18 @@ public class PlayerSelectTest extends GameApplication {
         p2Circle.setFill(colors[p2ColorIndex[0]]);
         p2Circle.setStroke(javafx.scene.paint.Color.BLACK);
         p2Circle.setStrokeWidth(3);
-        p2Circle.setTranslateX(750); // Adjust this to center in the right grey rectangle
+        p2Circle.setTranslateX(825); // Adjust this to center in the right grey rectangle
         p2Circle.setTranslateY(225);
 
         javafx.scene.control.Button p2Prev = new javafx.scene.control.Button("<");
-        p2Prev.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold; -fx-cursor: hand;");
+        p2Prev.setStyle(
+                "-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold; -fx-cursor: hand;");
         p2Prev.setTranslateX(740);
         p2Prev.setTranslateY(260);
 
         javafx.scene.control.Button p2Next = new javafx.scene.control.Button(">");
-        p2Next.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold; -fx-cursor: hand;");
+        p2Next.setStyle(
+                "-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold; -fx-cursor: hand;");
         p2Next.setTranslateX(965);
         p2Next.setTranslateY(260);
 
@@ -135,7 +139,8 @@ public class PlayerSelectTest extends GameApplication {
         });
 
         Button startButton = new Button("START MATCH");
-        startButton.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-background-color: #00FF00; -fx-text-fill: black;");
+        startButton.setStyle(
+                "-fx-font-size: 24px; -fx-font-weight: bold; -fx-background-color: #00FF00; -fx-text-fill: black;");
         startButton.setPrefSize(250, 60);
         startButton.setTranslateX((FXGL.getAppWidth() - 250) / 2.0);
         startButton.setTranslateY(450);
@@ -159,8 +164,6 @@ public class PlayerSelectTest extends GameApplication {
 
         // Add nodes to the scene
         getGameScene().addUINodes(p1Circle, p1Prev, p1Next, p2Circle, p2Prev, p2Next, startButton);
-
-
 
     }
 
