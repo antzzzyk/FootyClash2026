@@ -11,6 +11,7 @@ import com.almasb.fxgl.dsl.FXGL;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 
 //This class is a test class where we try to implement the player selection screen
 //This is where the player will select their tokens
@@ -133,14 +134,34 @@ public class PlayerSelectTest extends GameApplication {
             p2Circle.setFill(colors[p2ColorIndex[0]]);
         });
 
-        // Add nodes to the scene
-        getGameScene().addUINodes(p1Circle, p1Prev, p1Next, p2Circle, p2Prev, p2Next);
-
         Button startButton = new Button("START MATCH");
         startButton.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-background-color: #00FF00; -fx-text-fill: black;");
-        startButton.setPrefSize(200, 60);
-        startButton.setTranslateX((FXGL.getAppWidth() - 200) / 2.0);
+        startButton.setPrefSize(250, 60);
+        startButton.setTranslateX((FXGL.getAppWidth() - 250) / 2.0);
         startButton.setTranslateY(450);
+
+        startButton.setOnAction(e -> {
+
+            Color c1 = colors[p1ColorIndex[0]];
+            Color c2 = colors[p2ColorIndex[0]];
+
+            javafx.application.Platform.runLater(() -> {
+                try {
+                    new TokenDragTest(c1, c2).start(new javafx.stage.Stage());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            });
+
+            javafx.stage.Stage stage = (javafx.stage.Stage) startButton.getScene().getWindow();
+            stage.close();
+        });
+
+        // Add nodes to the scene
+        getGameScene().addUINodes(p1Circle, p1Prev, p1Next, p2Circle, p2Prev, p2Next, startButton);
+
+
+
     }
 
     public static void main(String[] args) {

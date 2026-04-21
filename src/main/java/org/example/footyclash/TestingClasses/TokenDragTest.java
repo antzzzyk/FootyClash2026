@@ -17,18 +17,20 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import GameClasses.CustomPhysicsComponent;
+import javafx.stage.Stage;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class TokenDragTest extends GameApplication {
 
+    public void start(Stage stage) {
+    }
+
     public enum EntityType {
         TEAM_BLUE, TEAM_RED, BALL, WALL
     }
 
-    public static void test(){
-        int hahaha = 2;
-    }
+    private Color c1, c2;
 
     private static final double MIN_VELOCITY_THRESHOLD = 100.0;
     private static final double MAX_DRAG_DISTANCE = 150.0;
@@ -50,6 +52,11 @@ public class TokenDragTest extends GameApplication {
     private Entity activeToken;
     private Point2D lastVelocity = Point2D.ZERO;
 
+    TokenDragTest(Color c1, Color c2){
+        this.c1=c1;
+        this.c2=c2;
+    }
+
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setTitle("Footy Clash Project - Token Drag Test");
@@ -66,8 +73,8 @@ public class TokenDragTest extends GameApplication {
 
         // Spawn Teams
         for (int i = 0; i < 5; i++) {
-            Token.createToken(250, 120 + i * 90, Color.BLUE, EntityType.TEAM_BLUE);
-            Token.createToken(810, 120 + i * 90, Color.RED, EntityType.TEAM_RED);
+            Token.createToken(250, 120 + i * 90, c1, EntityType.TEAM_BLUE);
+            Token.createToken(810, 120 + i * 90, c2, EntityType.TEAM_RED);
         }
 
         // Spawn Ball
@@ -273,8 +280,8 @@ public class TokenDragTest extends GameApplication {
         getGameWorld().getEntitiesByType(EntityType.TEAM_RED).forEach(Entity::removeFromWorld);
 
         for (int i = 0; i < 5; i++) {
-            Token.createToken(250, 120 + i * 90, Color.BLUE, EntityType.TEAM_BLUE);
-            Token.createToken(810, 120 + i * 90, Color.RED, EntityType.TEAM_RED);
+            Token.createToken(250, 120 + i * 90, c1, EntityType.TEAM_BLUE);
+            Token.createToken(810, 120 + i * 90, c2, EntityType.TEAM_RED);
         }
 
         Ball.createBall(getAppWidth() / 2.0 - 12, getAppHeight() / 2.0 - 12);
@@ -484,6 +491,7 @@ public class TokenDragTest extends GameApplication {
             }
         }
     }
+    
 
     public static void main(String[] args) {
         launch(args);
