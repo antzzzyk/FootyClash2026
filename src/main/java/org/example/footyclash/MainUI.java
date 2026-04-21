@@ -43,23 +43,25 @@ public class MainUI extends GameApplication {
 
         // Buttons
         VBox mmenu = new VBox(10);
-        Button solo = new Button("Solo Mode");
-        solo.setOnAction(e -> {
-        });
-        Button twop = new Button("2 Players");
-        twop.setOnAction(e -> {
-        });
-        Button sett = new Button("Settings");
+        
+        Button startBtn = new Button("Start");
+        startBtn.setPrefSize(250, 80);
+        startBtn.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-color: blue; -fx-text-fill: white;");
 
-        // Apply sizing to both
-        solo.setPrefSize(250, 80);
-        twop.setPrefSize(250, 80);
-        sett.setPrefSize(250, 80);
-        solo.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-color: blue; -fx-text-fill: white;");
-        twop.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-color: blue; -fx-text-fill: white;");
-        sett.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;-fx-background-color: blue; -fx-text-fill: white;");
+        startBtn.setOnAction(e -> {
+            javafx.application.Platform.runLater(() -> {
+                try {
+                    new org.example.footyclash.TestingClasses.PlayerSelectTest().start(new javafx.stage.Stage());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            });
 
-        mmenu.getChildren().addAll(solo, twop, sett);
+            javafx.stage.Stage stage = (javafx.stage.Stage) startBtn.getScene().getWindow();
+            stage.close();
+        });
+
+        mmenu.getChildren().add(startBtn);
 
         mmenu.setTranslateX(650);
         mmenu.setTranslateY(getAppHeight() / 2 - mmenu.getHeight() / 2);

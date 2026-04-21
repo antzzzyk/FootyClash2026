@@ -26,6 +26,9 @@ import javafx.scene.shape.Circle;
  */
 public class PlayerSelectTest extends GameApplication {
 
+    public void start(javafx.stage.Stage stage) {
+    }
+
     @Override
     protected void initSettings(GameSettings gameSettings) {
         gameSettings.setWidth(1100);
