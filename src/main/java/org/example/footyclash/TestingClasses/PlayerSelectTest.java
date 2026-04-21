@@ -7,6 +7,8 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.getAppWidth;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 
+import com.almasb.fxgl.dsl.FXGL;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -133,6 +135,12 @@ public class PlayerSelectTest extends GameApplication {
 
         // Add nodes to the scene
         getGameScene().addUINodes(p1Circle, p1Prev, p1Next, p2Circle, p2Prev, p2Next);
+
+        Button startButton = new Button("START MATCH");
+        startButton.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-background-color: #00FF00; -fx-text-fill: black;");
+        startButton.setPrefSize(200, 60);
+        startButton.setTranslateX((FXGL.getAppWidth() - 200) / 2.0);
+        startButton.setTranslateY(450);
     }
 
     public static void main(String[] args) {
